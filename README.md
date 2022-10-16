@@ -152,6 +152,4 @@ ombi_requests('MiOmbiApiKey', 'https://mihostombi', True, 7777)
 # Autor Contact
 ---
 
-- Discord: ***! Die()#1274***
-- [Twitter @ElHaban3ro](https://twitter.com/elhaban3ro)
-- [GitHub Profile @ElHaban3ro](https://github.com/ElHaban3ro)
+[![Contact Twitter](https://img.shields.io/badge/Twitter-ElHaban3ro-9cf.svg?style=for-the-badge&logo=twitter)](https://twitter.com/ElHaban3ro) [![Contact Discord](https://img.shields.io/badge/Discord-!%20Die()%231274-lightgray?style=for-the-badge&logo=discord)](https://discord.com) [![Contact Discord](https://img.shields.io/badge/GitHub-ElHaban3ro-lightgray?style=for-the-badge&logo=github)](https://github.com/ElHaban3ro)
