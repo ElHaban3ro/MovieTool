@@ -24,4 +24,4 @@ setup(
         'Programming Language :: Python :: 3.10'
     ],
     install_requires=["pandas==1.4.4", "python-qbittorrent==0.4.2", "lxml==4.9.1", "feedparser==6.0.10"]
-)
+)  # test comment xd
