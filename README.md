@@ -4,14 +4,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellowgreen.svg?style=flat-square)](https://opensource.org/licenses/MIT) [![Python 3.10](https://img.shields.io/badge/Python-3.10-blue.svg?style=flat-square&logo=python)](https://www.python.org/downloads/release/python-310/) [![PyPi Package](https://img.shields.io/badge/PyPi_Package-pip_install_MovieTool-yellow.svg?style=flat-square&logo=pypi)](https://pypi.org/project/MovieTool/) [![GitGub Repositorie](https://img.shields.io/badge/GitHub_Repositorie-MovieTool-gray.svg?style=flat-square&logo=github)](https://github.com/ElHaban3ro/MovieTool/)
 
-*Este proyecto está en actual desarrollo, por tanto, si ve algo que falte o que directamente tiene un bug, lo invito a que me diga qliao xd. Contacta conmigo por Discord o Twitter!*
+* ⚠ Este proyecto es uno personal, sin animo de lucro y tampoco animo a nadie a usarlo. La persona que utilice esta herramienta será bajo su propio riesgo y considero que no me hago cargo del uso que se haga de la misma. ⚠ 
+
+*Este es mi proyecto más grande hasta el momento, por tanto, si ven errores o cualquier cosa que creen se puede mejorar, me pueden comentar por mis redes.*
 
 
 
 ## Detalles del proyecto
 
 ---
-Descarga tus ***peliculas*** o ***series*** favoritas, **automatizando** la descarga de peliculas y series ***en español***, ahora 100% gratis. Usamos **OMBI**, **Plex**, **QBitTorrent** y *otros* servicios más para *cumplir la meta*. Una alternativa *facil de implementar* (ya trabajaré en la implementación casi 100% automatica) y barata por donde lo veas. ¡Te recomendamos que tengas a tu disposición ***MUY BUEN ALMACENAMIENTO***, pues, todo lo que se pida, **se descargará**, por tanto, puedes ir mirando y eliminando, o *dejarlo de por vida* para que otras personas las ***utilicen!***
+Descarga tus ***peliculas*** o ***series*** favoritas, **automatizando** la descarga de peliculas y series ***en español*** y 100% gratis (OJO, YO NO ALMACENO NADA, EL USAR TECNOLOGÍAS TORRENT ES BAJO SU RESPONSABILIDAD). Usamos **OMBI**, **Plex**, **QBitTorrent** y *otros* servicios más para *cumplir la meta*. Una alternativa *facil de implementar* (ya trabajaré en la implementación casi 100% automatica) y barata por donde lo veas. ¡Te recomendamos que tengas a tu disposición ***MUY BUEN ALMACENAMIENTO***, pues, todo lo que se pida, **se descargará**, por tanto, puedes ir mirando y eliminando, o *dejarlo de por vida* para que otras personas las ***utilicen!***
 
 Podrás usar los diferentes **modulos** de maneras independientes (más adelante la ***documentación***) o si lo prefieres, ***montar*** tu propio servidor *casi listo para utilizar* usando nuestros **scripts** (aún no ***disponibles***, no puedes montar tu servidor aún).
 
@@ -74,6 +76,34 @@ ombi_requests('MiOmbiApiKey', 'https://mihostombi', True, 7777)
 ## Módulos (DOCS)
 
 ----
+- ### ***download_torrents***:
+    - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, max_size: int, low_discard: bool)
+    
+    - **Descripción:**
+        - Usa este modulo para descargar el contenido multimedia es español. Como los parametros pueden indicar, hace falta tener corriendo en tu computadora el server de Jackett (muy facil de instalar) y un server de qBitTorrent (aún más facil de hacer).
+
+    - **params**:
+        - search: **(str)** | Nombre de la serie o película a buscar!
+        
+        - jackett_host: (str) | El host dond está corriendo tu servidor de Jackett.
+            
+        - jackett_apiKey: **(str)** | La API KEY de tu Jackett! La puedes encontrar
+            arriba derecha de tú Jackett.
+
+        - qbtorrent_host: **(str)** | El host donde esta corriento tu qBitTorrent WEB.
+
+        - qbtorrent_user: **(str)** | Usuario admin en tu qBitTorrrent!
+
+        - qbtorrent_pass: **(str)** | Contraseña de tu usuario en tu qBitTorrent!
+
+        - max_size: **(int)** | Peso máximo **(en MB) que podrán tener los archivos.
+
+        - low_discard: **(bool)** | Si desea que se descarte el contenido en 720p, active esto!
+    
+    - **Return**:
+        - Nombre del torrent descargado (puede que en el futuro cambiemos lo que devuele)
+
+
 
 - ### ***ombi_handler***:
     - > ombi_handler.ombi_requests(api_key: str, host: str, ssl: bool, port: int)

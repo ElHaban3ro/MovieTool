@@ -27,7 +27,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     max_size: int | Peso máximo (en MB) que podrán tener los archivos.
 
-    720_discard: bool | Si desea que se descarte el contenido en 720p, active esto!
+    low_discard: bool | Si desea que se descarte el contenido en 720p, active esto!
     """
 
     # Configuración inicial del string debúsqueda.
@@ -116,38 +116,45 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
     # Ahora sí, descarga de los torrents en sí.
 
     try:
-        f_torrent = torrents_definitive_list[0]
+        f_torrent = torrents_definitive_list[0] # Tomamos el primero de la lista. Esto aún se puede barajar, y ver si lo totamos otro torrent por diferente razón. Recordar que por lo menos, el RSS del jackett no devuelve los seeders ni peers para obtener más metadata, por tanto, nos vemos por este lado restringidos.
 
+        # Config torrents var's.
         torrent_link = f_torrent[1]
         torrent_size = f_torrent[0]
         torrent_name = f_torrent[2]
         
+
+
         try:
+            # Conexión al servidor de qBitTorrent!
+            global qb
             qb = Client(qbtorrent_host)
 
+
+
+        # Excepción si la url pasa está mal.
         except requests.exceptions.ConnectionError:
             print('(qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+            exit()
+        
+        # Iniciamos sesión en qBitTorrent para empezar a usarlo.
+        qbtorrent_login = qb.login(qbtorrent_user, qbtorrent_pass)
+        
+        print(qbtorrent_login)
 
+
+        # Manejo de contraseña/usuario incorrecto.
+        if qbtorrent_login == 'Fails.':
+            raise ValueError('(qBTorrentCredentialsError, error 04) Al parecer, las credenciales de tu qBitTorrent (usuario o contraseña) están mal. Como recordatorio: la contraseña por defecto del qBitTorrent es "adminadmin", y por otro lado, el usuario es "admin".')
         
 
+        # Descarga final del torrent!
+        qb.download_from_link(torrent_link)
+        print(f'La descarga de {torrent_name} comenzó.')
 
 
-
+        return torrent_name
 
 
     except IndexError:
         pass
-
-
-
-
-    
-
-        
-    
-
-
-
-
-
-download('La casa del dragón S01E05', 'http://mikoin.sytes.net:9117/', 'z96avavpt0rmbakcr7h2c85ir8ukw3dq', 'http://mikoin.sytes.net:7080/', 'admin', 'adminadmin')
