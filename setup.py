@@ -3,7 +3,7 @@ from setuptools import setup
 
 from pathlib import Path
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+long_description = (this_directory / "README.md").read_text('utf-8')
 
 
 
@@ -24,4 +24,4 @@ setup(
         'Programming Language :: Python :: 3.10'
     ],
     install_requires=["pandas==1.4.4", "python-qbittorrent==0.4.2", "lxml==4.9.1", "feedparser==6.0.10"]
-)  # test comment xd
+)
