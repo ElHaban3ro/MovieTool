@@ -3,8 +3,11 @@ import feedparser
 import requests
 
 
+from qbittorrent import Client
 
-def download(search: str, jacket_host: str, jacket_apiKey: str, max_size = 2000):
+
+
+def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, max_size = 2000, low_discard = True):
     """
     Descarga los torrents de las peliculas con ayuda de este módulo.
 
@@ -16,7 +19,15 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, max_size = 2000)
 
     jackett_apiKey: str | La API KEY de tu Jackett! La puedes encontrar arriba derecha de tú Jackett.
 
+    qbtorrent_host: str | El host donde esta corriento tu qBitTorrent WEB.
+
+    qbtorrent_user: str | Usuario admin en tu qBitTorrrent!
+
+    qbtorrent_pass: str | Contraseña de tu usuario en tu qBitTorrent!
+
     max_size: int | Peso máximo (en MB) que podrán tener los archivos.
+
+    720_discard: bool | Si desea que se descarte el contenido en 720p, active esto!
     """
 
     # Configuración inicial del string debúsqueda.
@@ -59,27 +70,84 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, max_size = 2000)
         url_consult = f'{jacket_host}/{parameters}'  # ¡Url lista para consulta!
 
 
-    print(f'Haciendo la busqueda de {search} con la siguiente url: {url_consult}')
+    print(f'Haciendo la busqueda de {search}.')
 
 
 
     # Accediendo!
     feed = feedparser.parse(url_consult)  # Se lee el RSS. ¡Devuelve una lista de diccionarios con los resultados!
+    
+    # Rastreo el estado 404 por si se ingresa mal el host del jackett!
+    if feed['status'] == 404:
+        raise Exception('(JackettHostError, error 02) Hay un erorr con la url del Jackett. Revisala. Puede que se deba a que esté mal redactada, que no esté corriendo el servidor o que esté en otro puerto.')
 
 
 
-    torrents = {}  # Diccionario para guardar los torrents
+    torrents = []  # Diccionario para guardar los torrents
 
 
     for torrent in feed['entries']:
-        torrents[torrent['title']] = [torrent['size'], torrent['link']]
+        torrents.append([torrent['size'], torrent['link'], torrent['title']])
+
+        
+
+    max_size_bytes = max_size * 1000000
 
 
-    torrents_values = list(torrents.values())  # Los valores que contiene cada torrent. El peso y el magnet link
-    torrents_name = list(torrents.keys())
+    torrents_definitive_list = []
+    
 
-    for size_count, size in enumerate(torrents_values):
-        print(f'{size[0]} - {torrents_name[size_count]}')
+    # TODO: si se prefiere que los torrents que contengan 720, comentar las siguientes lineas de código.
+    for torrents_info_count, torrents_info in enumerate(torrents):
+        # Sí el nombre del torrent no contiene "720" y, sí el peso del torrent no supera el ya pasado a la función como parametro:
+        if low_discard == True:
+            if '720' not in torrents_info[-1] and int(torrents_info[0]) <= max_size_bytes:
+                torrents_definitive_list.append(torrents[torrents_info_count])
+
+        else:
+            if int(torrents_info[0]) <= max_size_bytes:
+                torrents_definitive_list.append(torrents[torrents_info_count])
 
 
-download('Fall', 'http://mikoin.sytes.net:9117/', 'z96avavpt0rmbakcr7h2c85ir8ukw3dq')
+    if len(torrents_definitive_list) == 0:
+        print('(NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
+
+
+    # Ahora sí, descarga de los torrents en sí.
+
+    try:
+        f_torrent = torrents_definitive_list[0]
+
+        torrent_link = f_torrent[1]
+        torrent_size = f_torrent[0]
+        torrent_name = f_torrent[2]
+        
+        try:
+            qb = Client(qbtorrent_host)
+
+        except requests.exceptions.ConnectionError:
+            print('(qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+
+        
+
+
+
+
+
+
+    except IndexError:
+        pass
+
+
+
+
+    
+
+        
+    
+
+
+
+
+
+download('La casa del dragón S01E05', 'http://mikoin.sytes.net:9117/', 'z96avavpt0rmbakcr7h2c85ir8ukw3dq', 'http://mikoin.sytes.net:7080/', 'admin', 'adminadmin')
