@@ -9,11 +9,12 @@
 *Proyecto actualmente en desarrollo, puede que cuando esté leyendo el proyecto no esté completamente hecho o incluso tenga bugs IMPORTANTES.*
 
 
+- Developed in Python 3.10.
 
 ## Detalles del proyecto
 
 ---
-Proyecto personal para automatizar la descarga de contenido multimedia (películas y series) por medio de redes TORRENTS. Para lograr el objetivo hacemos uso de Plex, Ombi y otros cuantos servicios más (luego enumerados). La idea principal del proyecto es que se pueda crear una biblioteca con tus películas y series favoritas, esto, como proyecto personal para mi portafolio. Podrá crear un proyecto 100% montando y casi listo para correr haciendo uso de nuestro script de construcción (disponible en el futuro). Esta herramienta en conjunto con plex y otras más, crearía algo MUY parecido a Netflix, pero asegurate de que si lo haces, sea con fines didácticos. Recomiendo que al montar el servidor se disponga de MUY BUEN ALMACENAMIENTO, pues, aunque existe la posibilidad de ver y eliminar, la idea es que descargues las películas/series y puedas reproducirlas en un futuro.
+Proyecto **personal** para automatizar la descarga de contenido multimedia (películas y series) por medio de redes **TORRENTS**. Para lograr el objetivo hacemos uso de **Plex**, **Ombi** y otros cuantos servicios más (luego enumerados). La idea principal del proyecto es que se pueda crear una biblioteca con tus películas y series favoritas, esto, como proyecto personal para mi portafolio. Podrá crear un proyecto **100%** montando y casi listo para correr haciendo uso de nuestro script de construcción (disponible en el futuro). Esta herramienta en conjunto con plex y otras más, crearía algo MUY parecido a **Netflix**, pero asegurate de que si lo haces, sea con fines didácticos. Recomiendo que al montar el servidor se disponga de MUY BUEN **ALMACENAMIENTO**, pues, aunque existe la posibilidad de ver y eliminar, la idea es que descargues las películas/series y puedas reproducirlas en un **futuro**.
 
 Podrás usar los diferentes **modulos** de maneras independientes (más adelante la ***documentación***) o si lo prefieres, ***montar*** tu propio servidor *casi listo para utilizar* usando nuestros **scripts** (aún no ***disponibles***, no puedes montar tu servidor aún).
 
@@ -64,12 +65,14 @@ tu_proyecto |
 
 ---
 
+*Ten en cuenta que, todos estos módulos fueron construidos con la idea de ser utilizados juntos, ayudándose entre ellos y haciendo que el trabajo sea perfecto, por tanto, no recomendamos tocar scripts y simplemente montar tu proyecto desde [aquí (aún no disponible)](https://isaitech.site)*
+
 Hacer uso de nuestros modulos es realmente **facil**. Para utilizar un módulo, se haría de la siguiente forma:
 
 ```python
-from MovieTool.ombi_handler import ombi_requests
+from MovieTool.download_torrents import download
 
-ombi_requests('MiOmbiApiKey', 'https://mihostombi', True, 7777)
+d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http://qbtorrenthost:8080', 'admin', 'adminadmin', 'C:/users/yo/raw_movies/', 2000, False)
 ```
 
 
@@ -77,7 +80,7 @@ ombi_requests('MiOmbiApiKey', 'https://mihostombi', True, 7777)
 
 ----
 - ### ***download_torrents***:
-    - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, max_size: int, low_discard: bool)
+    - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size: int, low_discard: bool)
     
     - **Descripción:**
         - Usa este modulo para descargar el contenido multimedia en español. Como los parametros pueden indicar, hace falta tener corriendo en tu computadora el server de Jackett (muy facil de instalar) y un server de qBittorrent (aún más facil de hacer).
@@ -99,6 +102,8 @@ ombi_requests('MiOmbiApiKey', 'https://mihostombi', True, 7777)
         - max_size: **(int)** | Peso máximo **(en MB) que podrán tener los archivos.
 
         - low_discard: **(bool)** | Si desea que se descarte el contenido en 720p, active esto!
+
+        - download_path: **(str)** | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva.  ***RUTA ABSOLUTA!!!!***
     
     - **Return**:
         - Nombre del torrent descargado (puede que en el futuro cambiemos lo que devuele)

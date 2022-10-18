@@ -1,13 +1,13 @@
 # Libraries
 import feedparser
 import requests
-
+import os
 
 from qbittorrent import Client
 
 
 
-def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, max_size = 2000, low_discard = True):
+def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size = 2000, low_discard = True):
     """
     Descarga los torrents de las peliculas con ayuda de este módulo.
 
@@ -28,6 +28,8 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
     max_size: int | Peso máximo (en MB) que podrán tener los archivos.
 
     low_discard: bool | Si desea que se descarte el contenido en 720p, active esto!
+
+    download_path: str | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva. RUTA ABSOLUTA!!!!
     """
 
     # Configuración inicial del string debúsqueda.
@@ -76,7 +78,6 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     # Accediendo!
     feed = feedparser.parse(url_consult)  # Se lee el RSS. ¡Devuelve una lista de diccionarios con los resultados!
-    
     # Rastreo el estado 404 por si se ingresa mal el host del jackett!
     if feed['status'] == 404:
         raise Exception('(JackettHostError, error 02) Hay un erorr con la url del Jackett. Revisala. Puede que se deba a que esté mal redactada, que no esté corriendo el servidor o que esté en otro puerto.')
@@ -139,8 +140,8 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         
         # Iniciamos sesión en qBitTorrent para empezar a usarlo.
         qbtorrent_login = qb.login(qbtorrent_user, qbtorrent_pass)
-        
         print(qbtorrent_login)
+        
 
 
         # Manejo de contraseña/usuario incorrecto.
@@ -148,13 +149,29 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
             raise ValueError('(qBTorrentCredentialsError, error 04) Al parecer, las credenciales de tu qBitTorrent (usuario o contraseña) están mal. Como recordatorio: la contraseña por defecto del qBitTorrent es "adminadmin", y por otro lado, el usuario es "admin".')
         
 
+
+        # Voy a hacer uso de os.listdir() para ver si anda la ruta. Si tira error, es erronea. Es una forma sencilla de verificarlo.
+        try:
+            a = os.listdir(download_path)
+
+        except FileNotFoundError:
+            print('(DownloadPathError, error 05) La ruta de descarga proporcionada es erronea, no es una ruta absoluta o no es una carpeta.')
+            exit()
+
+
+
+        # TODO: Extraer información del torrent antes de descargarlo.
+
         # Descarga final del torrent!
-        qb.download_from_link(torrent_link)
-        print(f'La descarga de {torrent_name} comenzó.')
+        qb.download_from_link(torrent_link, savepath = download_path)
+        print(f'\nLa descarga de {torrent_name} comenzó.')
 
 
         return torrent_name
 
 
+
+
     except IndexError:
         pass
+

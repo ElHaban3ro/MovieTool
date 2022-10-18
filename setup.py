@@ -15,7 +15,7 @@ setup(
     packages = ['MovieTool'],
     version = '2.7',
     license = 'MIT',
-    description = "Descarga tus peliculas y series, automatiza todo y crea tu propio Netflix 100% funcional (y con más contenido que el de Netflix) haciendo uso de Plex, Ombi y otras tecnologías más. ⭐",
+    description = "Descarga tus peliculas y series, automatiza todo y crea tu propio Netflix (hecho con fines de aprendizaje) 100% funcional (y con más contenido que el de Netflix) haciendo uso de Plex, Ombi y otras tecnologías más. ⭐",
     author = 'ElHaban3ro',
     author_email = 'habanferd@gmail.com',
     url = 'https://github.com/ElHaban3ro/MovieTool',
