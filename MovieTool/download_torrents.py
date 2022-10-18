@@ -184,8 +184,3 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     except IndexError:
         pass
-
-    
-
-
-download('Dahmer S01E04', 'http://mikoin.sytes.net:9117/', 'z96avavpt0rmbakcr7h2c85ir8ukw3dq', 'http://127.0.0.1:8080/', 'Fer', '092531', r'C:\Users\ferdh\Desktop\Projects\MovieTool\Tests\movies_folder_test', 2000, False)
