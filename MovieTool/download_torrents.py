@@ -2,6 +2,7 @@
 import feedparser
 import requests
 import os
+import time
 
 from qbittorrent import Client
 
@@ -31,6 +32,9 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     download_path: str | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva. RUTA ABSOLUTA!!!!
     """
+
+
+
 
     # Configuración inicial del string debúsqueda.
     busqueda = search.replace(' ', '+')
@@ -140,7 +144,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         
         # Iniciamos sesión en qBitTorrent para empezar a usarlo.
         qbtorrent_login = qb.login(qbtorrent_user, qbtorrent_pass)
-        print(qbtorrent_login)
+        # print(qbtorrent_login)
         
 
 
@@ -150,22 +154,28 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         
 
 
-        # Voy a hacer uso de os.listdir() para ver si anda la ruta. Si tira error, es erronea. Es una forma sencilla de verificarlo.
-        try:
-            a = os.listdir(download_path)
-
-        except FileNotFoundError:
-            print('(DownloadPathError, error 05) La ruta de descarga proporcionada es erronea, no es una ruta absoluta o no es una carpeta.')
-            exit()
-
-
 
         # TODO: Extraer información del torrent antes de descargarlo.
 
         # Descarga final del torrent!
-        qb.download_from_link(torrent_link, savepath = download_path)
+        t_d = qb.download_from_link(torrent_link, savepath = download_path)  # Si la ruta está mal, directamente se descarga en descargas.
         print(f'\nLa descarga de {torrent_name} comenzó.')
+        time.sleep(3)
 
+        active_torrents = qb.torrents(sort = 'added_on')  # Devielve TODOS los torrents activos ordenados por orden de añadido!
+        re_active = []  # Lista para rehacer la lista de los torrents activos.
+
+
+        for at in active_torrents:
+            re_active.append({'added_on': at['added_on'], 'hash': at['hash'], 'name': at['name']})
+        
+
+        active_torrents_sort = re_active[::-1]
+        
+        actual_torrent = active_torrents_sort[0]
+        torrent_name = actual_torrent['name']
+
+        
 
         return torrent_name
 
@@ -175,3 +185,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
     except IndexError:
         pass
 
+    
+
+
+download('Dahmer S01E04', 'http://mikoin.sytes.net:9117/', 'z96avavpt0rmbakcr7h2c85ir8ukw3dq', 'http://127.0.0.1:8080/', 'Fer', '092531', r'C:\Users\ferdh\Desktop\Projects\MovieTool\Tests\movies_folder_test', 2000, False)
