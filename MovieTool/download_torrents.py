@@ -62,11 +62,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
     else:
         parameters = f'api/v2.0/indexers/all/results/torznab/api?apikey={jacket_apiKey}&t=search&q={busqueda}'
         
-
-
-
-
-
+        
 
     # Validación de sí la url pasada contiene la típica "/" al fínal. Sí es así, se la eliminamos.
     if jacket_host[-1] == '/':

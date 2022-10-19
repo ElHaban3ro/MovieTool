@@ -111,41 +111,38 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
 
 - ### ***ombi_handler***:
-    - > ombi_handler.ombi_requests(api_key: str, host: str, ssl: bool, port: int)
+    - > ombi_handler.ombi_requests(ombi_host: str, ombi_apikey)
         - **Descripción:**
           - Usa este módulo como handler de tu servidor ombi y recibir las peliculas o series que se piden. Por ahora solo soporta las series, pero se está trabajando para hacerlo compatible con peliculas de igual forma. Recomiendo ejecutar esto en un nuevo hilo Python, además de estar en un bucle infinito con un ```time.sleep(15)```
 
         - **params**:
-          - api_key: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
-    
-          - host: **(str)** | Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
-    
-          - ssl: **(bool)** |  Proporciona información de sí tu servidor OMBI corre en un ambiente "seguro".
+          - ombi_host: **(str)** | Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
 
-          - port: **(int)** | Puerto donde está corriendo tu servidor OMBI.
+          - ombi_apikey: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+    
+    
 
         - **Return**:
-          - Una lista de listas, con las series que se han pedido.
+          - Esto devuelve una lista de listas con la serie! Un ejemplo sería el siguiente:
+
             - **example**:
               - ```console
-                > [['Stranger Things S01', 'Stranger Things S02'], ['House Of The Dragon S01E01', ''House Of The Dragon S01E02'']]
+                > [['La casa del Dragón S01E05', 234252, ['tv', 2399]]
                 ```
 
-    - > ombi_handler.ombi_delete(ombi_request_id:str, api_key: str, host: str, ssl: bool, port: int)
+             Para cada lista, los dos últimos indices pertenecen al ID del TheMovieDb y el ID del request del Ombi. Esto es útil para poder eliminar la requests desde API de OMBI.
+
+    - > ombi_handler.ombi_delete(ombi_request_id:str, ombi_host: str, ombi_apikey: str, content_type: str)
         - **Descripción:**
           - Elimina una petición dado su requestId. Si se utiliza la función anterior, esta se devuelve en el último índice de cada lista. Esto lo usamos para que, después de aceptar y poner a descargar la serie/pelicula, no se quede en el apartado de "espera".
 
         - **params**:
           - ombi_request_id: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
         
-          - api_key: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
-    
-          - host: **(str)** | Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
-    
-          - ssl: **(bool)** |  Proporciona información de sí tu servidor OMBI corre en un ambiente "seguro".
+          - ombi_host: **(str)** | Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
 
-          - port: **(int)** | Puerto donde está corriendo tu servidor OMBI.
-
+          - ombi_apikey: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+    
         - **Return**:
           - None.
 

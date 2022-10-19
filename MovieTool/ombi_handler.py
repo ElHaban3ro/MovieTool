@@ -1,75 +1,89 @@
+import json
 import requests
 from datetime import date
+import time
 
+import urllib.request
 
 # ombi_login = requests.post('http://mikoin.sytes.net:5000/api/v1/Logging')
 
 
-def ombi_requests(api_key: str, host: str, ssl: bool, port: int):
+def ombi_requests(ombi_host: str, ombi_apikey: str):
     """
     Usa este módulo como handler de tu servidor ombi y resivir las peliculas o series que se piden. Por ahora solo soporta las series, pero se está trabajando para hacerlo compatible con peliculas de igual forma.
 
 
     Params
     =======
-    api_key: Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+    ombi_host: str | Dirección url donde está corriendo tu OMBI.
 
-    host: Dirección url donde está corriendo tu OMBI. Puede ser
-          ingresado con el protocolo https o sin él. De cualquier manera
-          especificar en el siguiente parametro.
+    ombi_apikey: str | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
 
-    ssl: Proporciona información de sí tu servidor OMBI corre en un ambiente "seguro".
-
-    port: Puerto donde está corriendo tu servidor OMBI.
     """
+    
 
-    # Si la url contiene un '/' al final, se lo sacamos para poder añadir el puerto.
-
-    if host[-1] == '/':
-        host = host[:-1]
-
-    host = f'{host}:{port}'
-
-    # ¡Si la url no contiene ningún protocolo, se lo añadimos!
-    if 'http://' in host or 'https://' in host:
-        protocol: bool = True
-
-
-    else:
-        protocol: bool = False
-
-        if not ssl:
-            host = f'http://{host}'
-
-        elif ssl:
-            host = f'https://{host}'
-
-    ombi_header = {'ApiKey': api_key}
+    ombi_header = {'ApiKey': ombi_apikey}  # Header que se envia al ombi y que es NECESARIO para que pueda ejecutar las consultas.
 
     # Aquí hacemos la petición a la API.
-    ombi_api_response = requests.get(f'{host}/api/v1/Request/tv', params=ombi_header)
-    tv_requests = ombi_api_response.json()  # Esto nos devolvería ya las pelis que se han pedido.
+
+    if ombi_host[-1] == '/':
+        ombi_tv = requests.get(f'{ombi_host}api/v1/Request/tv', params=ombi_header)  # Consulta que devuelve las series.
+        ombi_movies = requests.get(f'{ombi_host}api/v1/Request/movie', params=ombi_header)  # Consulta que devuelve las peliculas sin aceptar.
+
+    else:
+        ombi_tv = requests.get(f'{ombi_host}/api/v1/Request/tv', params=ombi_header)  # Consulta que devuelve las series.
+        ombi_movies = requests.get(f'{ombi_host}/api/v1/Request/movie', params=ombi_header)  # Consulta que devuelve las peliculas sin aceptar.
+
+    
+    
+    if ombi_tv.status_code == 404:
+        raise ValueError('(OmbiHostError, error 01) Es posible que la URL de donde está corriendo tu servidor de ombi sea incorrecta, asegurese de que esté en el puerto correcto!')
+
+    elif ombi_tv.status_code == 401:
+        raise ValueError('(OmbiApiKeyError, error 02) La API Key proporcionada es erronea. Asegurese de proporcionar la correcta. Si no está seguro de como obtenerla, vaya a su Ombi > Settings > Configuration > General > Api Key')
+
+
+    #try:
+    tv_requests = ombi_tv.json()  # Esto nos devolvería ya las series que se han pedido.
+    #except json.decoder.JSONDecodeError:
+    #    print('cero')
+
     # Claramente en formato JSON.
+    movie_requests = ombi_movies.json()
+    # print(movie_requests)
 
     # PARA LAS PETICIONES DE SERIES.
     # No son lo mismo que las peliculas, ya que en ocaciones, algunos
     # capitulos de la serie no se han publicado.
 
-    # Diccionario de la cola.
-    cola = {}
+    # Lista de contenido en cola.
+    cola = []
 
     capitulos_publicados = []
     show_incomplete = []
 
     complete: bool = True
+    
 
     # Añadimos la serie a la cola!
     for show in tv_requests:
         show_status = show['childRequests'][0]['requestStatus'].split('.')[1]
-        show_title = show['title']
+        show_title = show['title'] # TODO: Converti nombre.
+        show_id = show['id']
+        
+
+
         show_seasons = show['totalSeasons']
         show_S_requests = show['childRequests'][0]['seasonRequests']
         show_request_ombi = show['childRequests'][0]['parentRequestId']
+
+        show_tvId = show['externalProviderId']
+        # print(show)
+        
+        get_serie_info = requests.get(f'https://api.themoviedb.org/3/tv/{show_tvId}?api_key=5eb7e21201ae0b13d5e4f992ee9d5471&language=es-ES')  # Se hace la petición con mi propia API Key, espero no conlleve un problema XDDDD.
+
+        serie_info = get_serie_info.json()  # Esto nos devuelve un diccionario.
+        show_title = serie_info['name']  # El titulo de la serie ya en español (en el caso de que esté).
 
         complete = True
 
@@ -125,12 +139,12 @@ def ombi_requests(api_key: str, host: str, ssl: bool, port: int):
                         else:
                             capitulos_publicados.append(False)
                             complete = False
-
                     else:
                         capitulos_publicados.append(True)
                         complete = True
 
                     charapters.append(f'{show_title} {episode_se}')
+
 
             if complete:
                 show_incomplete.insert(0, f'{show_title} {season_number}')
@@ -139,57 +153,53 @@ def ombi_requests(api_key: str, host: str, ssl: bool, port: int):
                 for i in charapters:
                     show_incomplete.append(i)
 
-        print(complete)
 
-        show_seasons_list = []
+        
+        charapters.append(show_tvId)
+        charapters.append(['tv', show_id])
+        
+        # Acá vamos a hacer una excepción con Dahmer – Monster: The Jeffrey Dahmer Story, ya que es conocida simplemente como Dahmer. Esto supongo que lo iré haciendo con diferentes series según convenga.
+        charapters_except = []
+        for c in charapters[:-1]:
+            if isinstance(c, str) and 'Monstruo: La historia de Jeffrey Dahmer' in c:
+                c = c.replace('Monstruo: La historia de Jeffrey Dahmer', 'Dahmer')
+                charapters_except.append(c)
 
-        for S in show_S_requests:
-            show_seasons_list.append(f"{S['seasonNumber']}")
+        
 
-        if show_status == 'ProcessingRequest':
-            cola[show_title] = {'total seasons': show_seasons, 'season request': show_seasons_list,
-                                'id': show_request_ombi}
 
-    show_season = []
-
-    # Para meter dentro de la lista "show_season", una lista con los strings del
-    # nombre de la serie y su debido número de temporadas. Mire más abajo el ejemplo de lista que devuelve.
-    for show in cola:
-        show_list = []
-
-        request_name = ''
-
-        request_id = ''
-        for season_info in cola[show]['season request']:
-            if len(season_info) == 1:
-                season_info = f'S0{season_info}'
-
-            else:
-                season_info = f'S{season_info}'
-
-            show_list.append(f'{show} {season_info}')
-
-            request_id = cola[show]['id']
-
-            request_name = show
-
-        show_list.append(request_id)
-        show_incomplete.append(request_id)
-
-        show_list.append(request_name)
-        show_incomplete.append(request_name)
-
-        if complete:
-            show_season.append(show_list)
-
+        if len(charapters_except) == 0:
+            cola.append(charapters)
+            
         else:
-            show_season.append(show_incomplete)
+            charapters_except.append(charapters[-1])
+            cola.append(charapters_except)
 
-    print(show_incomplete)
 
-    return show_season  # IMPORTANTE: Esto devuelve una lista de listas.
-    # Se vería así: [['The Boys S01', 'The Boys S02', 'The Boys S03', 'The Boys S04'],
-    # ['Breaking Bad S01'], ['Stranger Things S03', 'Stranger Things S04'], ['Family Guy S16']]
+    movies = []
+
+
+    for movie in movie_requests:
+        consult_movie = requests.get(f'https://api.themoviedb.org/3/movie/{movie["theMovieDbId"]}?api_key=5eb7e21201ae0b13d5e4f992ee9d5471&language=es-ES').json()
+        
+        movie_title_es = consult_movie['title']
+        movie_id = movie['id']
+
+        #print(movie)
+
+        movie_append = [movie_title_es, movie['theMovieDbId'], ['movie', movie_id]] # Sacamos el titulo y el ID de TMDB. Esto mismo debo hacer con las series, no es complicado.
+
+        movies.append(movie_append)
+
+
+
+    for movie in movies:
+        cola.append(movie)
+
+ 
+    print(f'\n{cola}\n')
+
+    return cola  # Esto devuelve una lista de listas con la serie! Un ejemplo sería el siguiente: [['La casa del Dragón S01E05', 234252, ['tv', 109]]]!! Para cada lista, los dos últimos indices pertenecen al ID del TheMovieDb y el ID del request del Ombi. Esto es útil para poder eliminar la requests desde API de OMBI.
 
     # Eso se tiene que hacer en bucle desde fuera.
     # Si se ejecuta este módulo una sola vez, solo obtiene la información de ese momento,
@@ -198,8 +208,10 @@ def ombi_requests(api_key: str, host: str, ssl: bool, port: int):
     # TODO: Crear función para extraer las peliculas también.
 
 
+
+
 # Función para eliminar el requests de Ombi.
-def ombi_delete(ombi_request_id: str, api_key: str, host: str, ssl: bool, port: int):
+def ombi_delete(ombi_request_id: str, ombi_host: str, ombi_apikey: str, content_type:str):
     """
     Elimina una petición dado su requestId. Si se utiliza la función anterior, esta se devuelve
     en el último índice de cada lista. Esto lo usamos para que, después de aceptar y
@@ -208,40 +220,53 @@ def ombi_delete(ombi_request_id: str, api_key: str, host: str, ssl: bool, port: 
     
     Params
     =======
-    ombi_request_id: El requestId del cual se eliminará su petición dentro de OMBI, bien puede
-    ser una pelicula o una serie.
-    
-    api_key: Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
-    
-    host: Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el
-    protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
-    
-    ssl: Proporciona información de sí tu servidor OMBI corre en un ambiente "seguro".
-    
-    port: Puerto donde está corriendo tu servidor OMBI.
+    Usa este módulo como handler de tu servidor ombi y resivir las peliculas o series que se piden. Por ahora solo soporta las series, pero se está trabajando para hacerlo compatible con peliculas de igual forma.
+
+
+    Params
+    =======
+    ombi_request_id: (str) | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+
+    ombi_host: str | Dirección url donde está corriendo tu OMBI.
+
+    ombi_apikey: str | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+
+    content_type: str | El tipo de contenido del que se va a borrar. Recibe solo dos posibles parametros: "movies" o "tv".
+
     """
+    
+    # ===========================================
+    headers = {'content-type': 'application/json'}
+    ombi_header = {'ApiKey': ombi_apikey}
+    
+    
 
-    # Si la url contiene un '/' al final, se lo sacamos para poder añadir el puerto.
-    if host[-1] == '/':
-        host = host[:-1]
 
-    host = f'{host}:{port}'
+    if ombi_host[-1] == '/':
+        ombi_host = ombi_host[:-1]
+    else:
+        pass
+    
 
-    # ¡Sí la url no contiene ningún protocolo, se lo añadimos!
-    if 'http://' in host or 'https://' in host:
-        protocol: bool = True
+    # Aquí hacemos la petición a la API.
+    if content_type == 'tv':
+        consult = requests.delete(f'{ombi_host}/api/v1/Request/tv/{ombi_request_id}',params=ombi_header)
 
+        if consult.status_code == 200:
+            return 'Eliminación completa'
+
+        else:
+            return 'Algo ha sucedido, puede que no este pasando el request id correcto.'
 
     else:
-        protocol: bool = False
+        consult = requests.delete(f'{ombi_host}/api/v1/Request/movie/{ombi_request_id}',  params = ombi_header, headers = headers, data = ombi_header)  # TODO: ARREGLAR DE QUE SE ELIMINEN LA PELICULAS SOLICITADAS. Funciona con las series pero no con las peliculas por alguna razón.No tiene sentido. Puede ser por el desactualizado server, pero debemos esperar.
 
-        if not ssl:
-            host = f'http://{host}'
 
-        elif ssl:
-            host = f'https://{host}'
+        print(consult.headers)
+       
+        if consult.status_code == 200:
+            return 'Eliminación completa'
 
-    # ===========================================
-    ombi_header = {'ApiKey': api_key}
-    # Aquí hacemos la petición a la API.
-    ombi_api_response = requests.delete(f'{host}/api/v1/Request/tv/{ombi_request_id}', params=ombi_header)
+        else:
+            return 'Algo ha sucedido, puede que no este pasando el request id correcto.'
+
