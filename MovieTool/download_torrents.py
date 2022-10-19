@@ -35,7 +35,6 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
 
 
-
     # Configuración inicial del string debúsqueda.
     busqueda = search.replace(' ', '+')
     
