@@ -88,7 +88,7 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
     - **params**:
         - search: **(str)** | Nombre de la serie o película a buscar!
         
-        - jackett_host: (str) | El host dond está corriendo tu servidor de Jackett.
+        - jackett_host: **(str)** | El host dond está corriendo tu servidor de Jackett.
             
         - jackett_apiKey: **(str)** | La API KEY de tu Jackett! La puedes encontrar
             arriba derecha de tú Jackett.
@@ -142,34 +142,33 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
           - ombi_host: **(str)** | Dirección url donde está corriendo tu OMBI. Puede ser ingresado con el protocolo https o sin él. De cualquier manera especificar en el siguiente parametro.
 
           - ombi_apikey: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
+
+          - content_type: **(str)** | Tipo de contenido a eliminar. Este parametro solo puede recibir 2 valores: "**movies**" o "**tv**", siendo tv correspondiente a las series.
     
         - **Return**:
-          - None.
+          - Info string.
 
 
 - ### ***torrent_handler***:
 
-    - > ombi_handler.t_handler(torrent_name_to_handler: str, search: str, movies_db_route: str, serie_name: str, qb_user: str,
-              qb_pass: str, qb_ip: str, handler_time: int)
+    - > torrent_handler.torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time: float)
         - **Descripción:**
           - ¡Usa ese módulo para estar pendiente de sí tus torrents ya se descargaron! Recomendamos ejectuar esto en un nuevo hilo. De igual forma, si utilizas este módulo te recomendamos utilizar el limitador de seeding propio del qBittorrent.
 
         - **params**:
-          - torrent_name_to_handler: Torrent name to handler!
-    
-          - search: La búsqueda que utilizaste para el torrent! Esto lo empleamos para renombrar las peliculas. Si no quieres añadir un nombre, proporciona aquí el mismo que en el parametro anterior (torrent_name_to_handler)
-    
-          - movies_db_route: Ruta definitiva (donde moveremos las pelis para generar nuestro catálogo) donde se estructurarán las series/peliculas por nombre oficial, después de terminar de descargar y mover los archivos, se espera que no se muevan de nuevo, una ruta definitiva!
-    
-          - serie_name: Nombre de la serie! ¡Utilizada para crear una carpeta con el nombre! Si se emplea OMBI con nuestro módulo, puedes optar por acceder al nombre de la serie con su Return.
-    
-          - qb_user: Usuario admin de tú qBittorrent.
-    
-          - qb_pass: Contraseña del usuario admin de tu qBittorrent.
-    
-          - qb_ip: Ruta donde está corriendo tu Web UI del qBittorrent.
+            - torrent_name: **(str)** | Nombre del torrent a visualizar.
 
-          - handler_time: Tiempo de espera (en segundos) con el cual se hace las peticiones a la API de qBittorrent y ver si se ha descargado dicha serie.
+            - original_name: **(str)** | El nombre oficial de la serie/pelicula. Esto lo usamos para renombrar archivos, crear carpetas etc.
+
+            - route_moviesdb: **(str)** | Ruta definitiva para el contenido. Esta ruta es la que tomará plex para ver el contenido. Lo ideal sería que una vez  establecida no fuera cambiada, por tanto, ten en cuenta esto.
+
+            - qbtorrent_host: **(str)** | El host donde esta corriento tu qBittorrent WEB.
+
+            - qbtorrent_user: **(str)** | Usuario admin en tu qBitTorrrent!
+
+            - qbtorrent_pass: **(str)** | Contraseña del usuario admin de tu QBitTorrent.
+
+            - handler_time: float | Tiempo de espera sobre el cual se harán las peticiones al estado de la descarga, en segundos. Recomiendo no dejar un numero tan alto (como 60), ni tan bajo (como 3).
 
           - **Return**:
             - La lista de los archivos que se consideraron multimedia y que se pasaron a la nueva carpeta de esa serie/pelicula.

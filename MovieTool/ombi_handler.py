@@ -1,9 +1,5 @@
-import json
 import requests
 from datetime import date
-import time
-
-import urllib.request
 
 # ombi_login = requests.post('http://mikoin.sytes.net:5000/api/v1/Logging')
 
@@ -154,9 +150,7 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
                     show_incomplete.append(i)
 
 
-        
-        charapters.append(show_tvId)
-        charapters.append(['tv', show_id])
+        charapters.append({'contentType': 'tv', 'showId': show_id, 'dbId': show_tvId, 'title': show_title})
         
         # Acá vamos a hacer una excepción con Dahmer – Monster: The Jeffrey Dahmer Story, ya que es conocida simplemente como Dahmer. Esto supongo que lo iré haciendo con diferentes series según convenga.
         charapters_except = []
@@ -187,9 +181,11 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
 
         #print(movie)
 
-        movie_append = [movie_title_es, movie['theMovieDbId'], ['movie', movie_id]] # Sacamos el titulo y el ID de TMDB. Esto mismo debo hacer con las series, no es complicado.
+        # movie_append = [movie_title_es, movie['theMovieDbId'], ['movie', movie_id]]
+        movies.append({'contentType': 'movie', 'showId': movie_id, 'dbId': movie['theMovieDbId'], 'title': movie_title_es})
 
-        movies.append(movie_append)
+        # Sacamos el titulo y el ID de TMDB. Esto mismo debo hacer con las series, no es complicado.
+        # movies.append(movie_append)
 
 
 
@@ -206,7 +202,6 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
     # y, por tanto, no es conveniente dependiendo qué casos.
 
     # TODO: Crear función para extraer las peliculas también.
-
 
 
 
@@ -231,7 +226,7 @@ def ombi_delete(ombi_request_id: str, ombi_host: str, ombi_apikey: str, content_
 
     ombi_apikey: str | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
 
-    content_type: str | El tipo de contenido del que se va a borrar. Recibe solo dos posibles parametros: "movies" o "tv".
+    content_type: str | El tipo de contenido del que se va a borrar. Recibe solo dos posibles parametros: "movie" o "tv".
 
     """
     
@@ -269,4 +264,3 @@ def ombi_delete(ombi_request_id: str, ombi_host: str, ombi_apikey: str, content_
 
         else:
             return 'Algo ha sucedido, puede que no este pasando el request id correcto.'
-

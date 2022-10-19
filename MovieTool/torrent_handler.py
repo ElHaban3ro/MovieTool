@@ -4,39 +4,36 @@ import os
 import shutil
 
 
-def t_handler(torrent_name_to_handler: str, search: str, movies_db_route: str, serie_name: str, qb_user='admin',
-              qb_pass='adminadmin', qb_ip='https://127.0.0.1:8080', handler_time=10):
+def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10):
     """
     ¡Usa ese módulo para estar pendiente de sí tus torrents ya descargaron! Recomendamos ejectuar esto en un nuevo hilo.
     
     
     Params
     =======
-    torrent_name_to_handler: Torrent name to handler!
+    torrent_name: str | Nombre del torrent a visualizar.
 
-    search: La búsqueda que utilizaste para el torrent! Esto lo empleamos para renombrar las peliculas. Si no quieres añadir un nombre, proporciona aquí el mismo que en el parametro anterior (torrent_name_to_handler)
+    original_name: str | El nombre oficial de la serie/pelicula. Esto lo usamos para renombrar archivos, crear carpetas etc.
 
-    movies_db_route: Ruta definitiva (donde moveremos las pelis para generar nuestro catálogo) donde se estructurarán las series/peliculas por nombre oficial, después de terminar de descargar y mover los archivos, se espera que no se muevan de nuevo, una ruta definitiva!
+    route_moviesdb: str | Ruta definitiva para el contenido. Esta ruta es la que tomará plex para ver el contenido. Lo ideal sería que una vez  establecida no fuera cambiada, por tanto, ten en cuenta esto.
 
-    serie_name: Nombre de la serie! ¡Utilizada para crear una carpeta con el nombre! Si se emplea OMBI con nuestro módulo, puedes optar por acceder a el nombre de la serie con su Return.
+    qbtorrent_host: str | El host donde esta corriento tu qBittorrent WEB.
 
-    qb_user: Usuario admin de tú QBitTorrent.
+    qbtorrent_user: str | Usuario admin en tu qBitTorrrent!
 
-    qb_pass: Contraseña del usuario admin de tu QBitTorrent.
+    qbtorrent_pass: str | Contraseña del usuario admin de tu QBitTorrent.
 
-    qb_ip: Ruta donde está corriendo tu Web UI del QBitTorrent.
-
-    handler_time: Tiempo de espera (en segundos) con el cual se hace las peticiones a la API de qBitTorrent y ver si se ha descargado dicha serie.
+    handler_time: float | Tiempo de espera sobre el cual se harán las peticiones al estado de la descarga, en segundos. Recomiendo no dejar un numero tan alto (como 60), ni tan bajo (como 3).
     """
 
     # Torrent Name!
-    name = torrent_name_to_handler
+    name = torrent_name
 
     # Login qBitTorrent
-    qb = Client(qb_ip)  # Nos conectamos ¿?
-    qb.login(qb_user, qb_pass)
+    qb = Client(qbtorrent_host)  # Nos conectamos al qBittorrent.
+    qb.login(qbtorrent_user, qbtorrent_pass)  # Login.
 
-    # El handler en sí, cada 20 s haremos una petición a qBitTorrent server para ver y manejar la descarga. De aquí solo sacaremos el hash de la descarga (por si la necesitamos), el estado actual y el path, que es donde se está descargando.
+    # Con el handler en sí, cada 10 s haremos una petición a qBitTorrent server para ver y manejar la descarga. De aquí solo sacaremos el hash de la descarga (por si la necesitamos), el estado actual y el path, que es donde se está descargando.
 
     # Esta sub función la usamos para obtener el estado del torrent. Esto lo sacamos en una función aparte, ya que, es lo que por separado, toca ejectutar constantemente para obtener SIEMRPE el estado del torrent.
     def get_state():
@@ -84,7 +81,7 @@ def t_handler(torrent_name_to_handler: str, search: str, movies_db_route: str, s
 
     while True:
         handler_state = get_state()
-        print(f'Siguiendo: {handler_state[2]}\n{handler_state[0]}\n\n\n')
+        print(f'====================================\n Siguiendo: {handler_state[2]}\n{handler_state[0]}====================================\n\n\n')
 
 
         # Acá es donde empezamos a manejar los archivos. ¡Con esto, ya verificamos que descargó y simplemente tenemos que idear una buena forma de detectar si es una serie o es una pelicula! (probablemente OMBI ayude)
@@ -95,7 +92,7 @@ def t_handler(torrent_name_to_handler: str, search: str, movies_db_route: str, s
 
             for filec, filef in enumerate(
                     folder_download):  # Saco todos los archivos".html", solo saco esto porque estoy seguro de que aquí no hay nada más. No va a haber ningún otro archivo. Estos dos, serán acompañados por la carpeta donde estarán los archivos de video, en el caso de que se haya encontrado algo para descargar.
-                if '.html' in filef or '.txt' in filef:
+                if '.html' in filef or '.txt' in filef or '.url' in filef:
                     folder_download.pop(filec)  # Sacamos eso de la lista. ¿Por qué? Luego lo usamos para mover los archivos, y no queremos que se muevan archivos basura.
 
             break
@@ -103,6 +100,8 @@ def t_handler(torrent_name_to_handler: str, search: str, movies_db_route: str, s
         # ¡Para estar pendiente de los torrents, pero que no esté ejecutandoce siempre, lo ponemos a esperar un tiempo, para que luego vuelva a ver el estado!
         time.sleep(handler_time)
 
+
+    # Después de la descarga!
     folder_t = []
 
     for fd in folder_download:
