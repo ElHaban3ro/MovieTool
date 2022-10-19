@@ -81,7 +81,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
     while True:
         handler_state = get_state()
-        print(f'====================================\n Siguiendo: {handler_state[2]}\n{handler_state[0]}====================================\n\n\n')
+        print(f'====================================\n Siguiendo: {handler_state[2]}\n{handler_state[0]}\n====================================\n\n\n')
 
 
         # Acá es donde empezamos a manejar los archivos. ¡Con esto, ya verificamos que descargó y simplemente tenemos que idear una buena forma de detectar si es una serie o es una pelicula! (probablemente OMBI ayude)
@@ -102,78 +102,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
     # Después de la descarga!
-    folder_t = []
-
-    for fd in folder_download:
-        if '.html' in fd:
-            pass
-
-        else:
-            folder_t.append(fd)
-
-    files_download = os.listdir(f'{handler_state[1]}/{folder_t[0]}')
-
-    episodes_cut = []
-    episodes = []
-
-    # TODO: PENDIENTE DE ESTO PARA LAS PELICULAS.
-    for episode in files_download:
-        if '.mkv' in episode:
-            episodes.append(episode)  # Vemos si en la carpeta de descarga hay archivos ".mkv" y los añadimos a la lista de capitulos.
-
-    episodes.sort()  # Los ordenamos por nombre, haciendo que se pongan en forma descendiende, gracias a su formato de nombre de serie (SXXEXX).
-
-
-    for episode in episodes:
-        if '.mkv' in episode:
-            episode = episode.replace(' ', '.')
-            episode = episode.split('.')
-
-            episodes_cut.append(episode)
+    print()
 
 
 
-    # Renombrar capitulos de las series.
-    # TODO: Pendiente de esto, recuerda que no es lo mismo para las peliculas, puede grave conflicto. PENDIENTE.
-
-
-    for c, e in enumerate(episodes_cut):
-        for s_e in e:
-
-            try:
-
-                # Renombramos cada capítulo por su temporada y número de capítulo! EJ: S01E08
-                if 'S' in s_e[0] and 'E' in s_e[3] or 'S' in s_e[0] and 'e' in s_e[3] or 's' in s_e[0] and 'e' in s_e[3] or 's' in s_e[0] and 'E' in s_e[3]:
-                    os.rename(f'{handler_state[1]}/{folder_t[0]}/{episodes[c]}',
-                              f'{handler_state[1]}/{folder_t[0]}/{s_e}.mkv')
-
-                else:
-                    os.rename(f'{handler_state[1]}/{folder_t[0]}/{episodes[0]}',
-                              f'{handler_state[1]}/{folder_t[0]}/{search}.mkv')
-
-
-            except OSError:  # TODO: Pentiende de esto, no estoy del todo seguro si es "OSError
-                pass
-
-    # Desde acá, se mueve el contenido a la carpeta definitiva. (!!!!)
-    new_content = os.listdir(f'{handler_state[1]}/{folder_t[0]}')
-    print(new_content)
-
-    # Creamos la nueva carpeta donde moveremos todos los archivos "mkv"
-    try:
-        os.mkdir(f'{movies_db_route}/{serie_name}/')
-
-    except FileExistsError:
-        pass
-
-
-    # Ahora sí, definitivamente se mueve.
-    for content in new_content:
-        try:
-            shutil.move(f'{handler_state[1]}/{folder_t[0]}/{content}', f'{movies_db_route}/{serie_name}')
-
-        except FileExistsError:
-            pass
-
-
-    return new_content
+while True:
+    torrent_handler('La Casa del Dragon - Temporada 1 [HDTV 720p][Cap.102][AC3 5.1 Castellano][www.atomoHD.wf]', 'La Casa Del Dragon', '/home/ferdev/db_movies/', 'http://mikoin.sytes.net:8080/', 'admin', 'adminadmin')
