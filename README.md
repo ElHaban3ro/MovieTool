@@ -127,7 +127,7 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
             - **example**:
               - ```console
-                > [['La casa del Dragón S01E05', 234252, ['tv', 2399]]
+                > [['La casa del Dragón S01E05', {'contentType': 'movie', 'showId': 234252, 'dbId': 777, 'title': 'La Casa Del Dragón'}]
                 ```
 
              Para cada lista, los dos últimos indices pertenecen al ID del TheMovieDb y el ID del request del Ombi. Esto es útil para poder eliminar la requests desde API de OMBI.
@@ -151,7 +151,7 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
 - ### ***torrent_handler***:
 
-    - > torrent_handler.torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time: float)
+    - > torrent_handler.torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, handler_time: float)
         - **Descripción:**
           - ¡Usa ese módulo para estar pendiente de sí tus torrents ya se descargaron! Recomendamos ejectuar esto en un nuevo hilo. De igual forma, si utilizas este módulo te recomendamos utilizar el limitador de seeding propio del qBittorrent.
 
@@ -160,7 +160,9 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
             - original_name: **(str)** | El nombre oficial de la serie/pelicula. Esto lo usamos para renombrar archivos, crear carpetas etc.
 
-            - route_moviesdb: **(str)** | Ruta definitiva para el contenido. Esta ruta es la que tomará plex para ver el contenido. Lo ideal sería que una vez  establecida no fuera cambiada, por tanto, ten en cuenta esto.
+            - route_moviesdb: **(str)** | Ruta definitiva para el contenido. Esta ruta es la que tomará plex para ver el contenido. Lo ideal sería que una vez  establecida no fuera cambiada, por tanto, ten en cuenta esto. 
+
+            - torrent_type: **(str)** | El tipo de contenido que está intentando rastrear. Ese parametro soporta SOLO dos valores: 'tv' o 'movie'
 
             - qbtorrent_host: **(str)** | El host donde esta corriento tu qBittorrent WEB.
 
@@ -168,7 +170,12 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
             - qbtorrent_pass: **(str)** | Contraseña del usuario admin de tu QBitTorrent.
 
-            - handler_time: float | Tiempo de espera sobre el cual se harán las peticiones al estado de la descarga, en segundos. Recomiendo no dejar un numero tan alto (como 60), ni tan bajo (como 3).
+            - handler_time: **(float)** | Tiempo de espera sobre el cual se harán las peticiones al estado de la descarga, en segundos. Recomiendo no dejar un numero tan alto (como 60), ni tan bajo (como 3).
+
+            - season: **(str)** | Si el parametro de "torrent_type" es "tv", es necesario especificar la temporada con el formato SXX, donde "X" es el número de temporada. Ej: S01.
+
+            - episode: **(str)** | Si el parametro de "torrent_type" es "tv", es necesario especificar el episodio con el formato EXX, donde "X" es el número de episodio. Ej: E02.
+
 
           - **Return**:
             - La lista de los archivos que se consideraron multimedia y que se pasaron a la nueva carpeta de esa serie/pelicula.
@@ -187,7 +194,7 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
 - Python - Lenguaje base del proyecto.
 - qBittorrent - Cliente de BitTorrents.
-- Jacket - API Para trackers.
+- Jackett - API Para trackers.
 - Ombi - Para hacer peticiones de peliculas.
 - Plex - Servicio para la visualización del contenido.
 

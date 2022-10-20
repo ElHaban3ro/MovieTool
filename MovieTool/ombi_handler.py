@@ -149,8 +149,7 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
                 for i in charapters:
                     show_incomplete.append(i)
 
-
-        charapters.append({'contentType': 'tv', 'showId': show_id, 'dbId': show_tvId, 'title': show_title})
+        charapters.append({'contentType': 'tv', 'showId': show_id, 'dbId': show_tvId, 'title': show_title, 'SE': {}})
         
         # Acá vamos a hacer una excepción con Dahmer – Monster: The Jeffrey Dahmer Story, ya que es conocida simplemente como Dahmer. Esto supongo que lo iré haciendo con diferentes series según convenga.
         charapters_except = []

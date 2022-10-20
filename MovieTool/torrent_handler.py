@@ -1,10 +1,31 @@
+from feedparser import exceptions
 from qbittorrent import Client
 import time
 import os
 import shutil
 
 
-def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10):
+# Exeptions:
+class CategoryContentError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))
+
+class SeasonEpisodeError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))
+
+
+
+
+
+
+def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX'):
     """
     ¡Usa ese módulo para estar pendiente de sí tus torrents ya descargaron! Recomendamos ejectuar esto en un nuevo hilo.
     
@@ -17,6 +38,8 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
     route_moviesdb: str | Ruta definitiva para el contenido. Esta ruta es la que tomará plex para ver el contenido. Lo ideal sería que una vez  establecida no fuera cambiada, por tanto, ten en cuenta esto.
 
+    torrent_type: str | El tipo de contenido que está intentando rastrear. Ese parametro soporta SOLO dos valores: 'tv' o 'movie'
+
     qbtorrent_host: str | El host donde esta corriento tu qBittorrent WEB.
 
     qbtorrent_user: str | Usuario admin en tu qBitTorrrent!
@@ -24,7 +47,24 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
     qbtorrent_pass: str | Contraseña del usuario admin de tu QBitTorrent.
 
     handler_time: float | Tiempo de espera sobre el cual se harán las peticiones al estado de la descarga, en segundos. Recomiendo no dejar un numero tan alto (como 60), ni tan bajo (como 3).
+
+    season: str | Si el parametro de "torrent_type" es "tv", es necesario especificar la temporada con el formato SXX, donde "X" es el número de temporada. Ej: S01.
+
+    episode: str | Si el parametro de "torrent_type" es "tv", es necesario especificar el episodio con el formato EXX, donde "X" es el número de episodio. Ej: E02.
+
+
     """
+    
+    torrent_category = ['tv', 'movie']
+
+    if torrent_type not in torrent_category:
+        raise CategoryContentError('(error 01) Tu "torrent_type" no es valido. Recuerda que, este parametro solo soporta dos valores: "tv" o "movie".')
+        exit()
+        
+    if torrent_type == 'tv' and season == 'SXX' or torrent_type == 'tv' and episode == 'EXX':
+        raise SeasonEpisodeError('(error 02) Por favor configure los parametros de "season", "episode".')
+
+
 
     # Torrent Name!
     name = torrent_name
@@ -79,32 +119,109 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         return [state, path, my_hash, name_torrent]
 
+
+    # Handler en sí.
     while True:
         handler_state = get_state()
-        print(f'====================================\n Siguiendo: {handler_state[2]}\n{handler_state[0]}\n====================================\n\n\n')
+        print(f'====================================\n Siguiendo: {handler_state[2]}')
+        print(f' {handler_state[0]} \n====================================\n\n\n')
+        
+        base_route = handler_state[1]
+
+        if base_route[-1] == '/' or base_route[-1] == '\\':
+            base_route = base_route[:-1]
+
 
 
         # Acá es donde empezamos a manejar los archivos. ¡Con esto, ya verificamos que descargó y simplemente tenemos que idear una buena forma de detectar si es una serie o es una pelicula! (probablemente OMBI ayude)
         if handler_state[0] == 'stalledUP' or handler_state[0] is None or handler_state[0] == 'uploading':  # Esto quiere decir que está seedeando, terminó de descargar o está "subiendo".
+            
+            delete_torrent = qb.delete(handler_state[2])
+            print(delete_torrent)
+
 
             # download_route = handler_state[1]  # ¡Ruta donde se descargó el torrent!
-            folder_download = os.listdir(handler_state[1])  # Lista de archivos de donde se descargó el torrent.
+            folder_download = os.listdir(f'{base_route}/{handler_state[3]}')  # Lista de archivos de donde se descargó el torrent.
+            
+            
+            
 
-            for filec, filef in enumerate(
-                    folder_download):  # Saco todos los archivos".html", solo saco esto porque estoy seguro de que aquí no hay nada más. No va a haber ningún otro archivo. Estos dos, serán acompañados por la carpeta donde estarán los archivos de video, en el caso de que se haya encontrado algo para descargar.
-                if '.html' in filef or '.txt' in filef or '.url' in filef:
-                    folder_download.pop(filec)  # Sacamos eso de la lista. ¿Por qué? Luego lo usamos para mover los archivos, y no queremos que se muevan archivos basura.
 
+            delete_files = []
+
+            for filec, fileff in enumerate(folder_download):  # Saco todos los archivos".html", solo saco esto porque estoy seguro de que aquí no hay nada más. No va a haber ningún otro archivo. Estos dos, serán acompañados por la carpeta donde estarán los archivos de video, en el caso de que se haya encontrado algo para descargar.
+                if '.html' in fileff or '.txt' in fileff or '.url' in fileff:
+                    delete_files.append(fileff)  # Sacamos eso de la lista. ¿Por qué? Luego lo usamos para mover los archivos, y no queremos que se muevan archivos basura.
+                    # folder_download.pop(filec)
+
+            # Con esto, eliminamos los archivos basura que no necesitamos.
+            for file_to_delete in delete_files:
+                os.remove(f'{base_route}/{handler_state[3]}/{file_to_delete}')
+
+
+            # Creo una lista con SOLO los archivos "mkv"
+            video_files = []
+            new_folder_download = os.listdir(f'{base_route}/{handler_state[3]}')
+            
+            for video_file in folder_download:
+                if '.mkv' in video_file or '.MKV' in video_file:
+                    video_files.append(video_file)
+
+
+            # Renombrando archivos!
+            if len(video_files) == 1:
+                if torrent_type == 'tv':
+                    tv_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
+
+                    new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
+                    new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season}{episode}.mkv'
+                    
+                    try:
+                        os.mkdir(new_tv_name_route)
+
+                    except:
+                        pass
+
+
+                    os.rename(tv_name, f'{base_route}/{handler_state[3]}/{season}{episode}.mkv')
+
+
+                else:
+                    movie_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
+                    new_movie_name = f'{base_route}/movies/{original_name}.mkv'
+
+
+                    os.rename(movie_name, f'{base_route}/{handler_state[3]}/{original_name}.mkv')
+
+
+
+
+            # Creando carpetas necesarias!
+            if route_moviesdb[-1] == '/' or route_moviesdb[-1] == '/':
+                route_moviesdb = route_moviesdb[:-1]
+
+                #f'{route_moviesdb}/{original_name} {season}{episode}'
+
+            try:
+                os.mkdir(f'{route_moviesdb}/tv')
+                os.mkdir(f'{route_moviesdb}/movies')
+            
+            except:
+                pass
+
+
+            if torrent_type == 'tv':
+                shutil.move(f'{base_route}/{handler_state[3]}/{season}{episode}.mkv', new_tv_name)
+
+            else:
+                shutil.move(f'{base_route}/movies/{original_name}.mkv', new_movie_name)
+
+            
+
+            print(f'Se ha hecho la descarga de {original_name}')
             break
+
+            
 
         # ¡Para estar pendiente de los torrents, pero que no esté ejecutandoce siempre, lo ponemos a esperar un tiempo, para que luego vuelva a ver el estado!
         time.sleep(handler_time)
-
-
-    # Después de la descarga!
-    print()
-
-
-
-while True:
-    torrent_handler('La Casa del Dragon - Temporada 1 [HDTV 720p][Cap.102][AC3 5.1 Castellano][www.atomoHD.wf]', 'La Casa Del Dragon', '/home/ferdev/db_movies/', 'http://mikoin.sytes.net:8080/', 'admin', 'adminadmin')

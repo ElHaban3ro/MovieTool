@@ -179,3 +179,4 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     except IndexError:
         pass
+
