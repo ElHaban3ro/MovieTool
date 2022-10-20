@@ -25,7 +25,7 @@ class SeasonEpisodeError(Exception):
 
 
 
-def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX'):
+def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX', content_release = '2005'):
     """
     ¡Usa ese módulo para estar pendiente de sí tus torrents ya descargaron! Recomendamos ejectuar esto en un nuevo hilo.
     
@@ -52,6 +52,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
     episode: str | Si el parametro de "torrent_type" es "tv", es necesario especificar el episodio con el formato EXX, donde "X" es el número de episodio. Ej: E02.
 
+    content_release: str | Fecha de estreno del contenido dado!
 
     """
     
@@ -174,7 +175,21 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     tv_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
 
                     new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
-                    new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season}{episode}.mkv'
+
+                    season_remake = season[1:]
+                    episode_remake = episode[1:]
+
+                    if season_remake[0] == '0' and len(season_remake) == 2:
+                        season_remake = season_remake[1:]
+
+                        
+                    # if episode_remake[0] == '0' and len(episode_remake) == 2:
+                        # episode_remake = episode_remake[1:]
+
+
+
+
+                    new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.mkv'
                     
                     try:
                         os.mkdir(new_tv_name_route)
@@ -183,15 +198,15 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
 
 
-                    os.rename(tv_name, f'{base_route}/{handler_state[3]}/{season}{episode}.mkv')
+                    os.rename(tv_name, f'{base_route}/{handler_state[3]}/{season_remake}x{episode_remake}.mkv')
 
 
                 else:
                     movie_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
-                    new_movie_name = f'{base_route}/movies/{original_name}.mkv'
+                    new_movie_name = f'{base_route}/movies/{original_name} ({content_release}).mkv'
 
 
-                    os.rename(movie_name, f'{base_route}/{handler_state[3]}/{original_name}.mkv')
+                    os.rename(movie_name, f'{base_route}/{handler_state[3]}/{original_name} ({content_release}).mkv')
 
 
 
@@ -211,10 +226,10 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
             if torrent_type == 'tv':
-                shutil.move(f'{base_route}/{handler_state[3]}/{season}{episode}.mkv', new_tv_name)
+                shutil.move(f'{base_route}/{handler_state[3]}/{season_remake}x{episode_remake}.mkv', new_tv_name)
 
             else:
-                shutil.move(f'{base_route}/movies/{original_name}.mkv', new_movie_name)
+                shutil.move(f'{base_route}/movies/{original_name} ({content_release}).mkv', new_movie_name)
 
             
 

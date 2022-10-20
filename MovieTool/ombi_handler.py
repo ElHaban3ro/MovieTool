@@ -80,6 +80,8 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
 
         serie_info = get_serie_info.json()  # Esto nos devuelve un diccionario.
         show_title = serie_info['name']  # El titulo de la serie ya en español (en el caso de que esté).
+        
+        show_release = serie_info['first_air_date'].split('-')[0]
 
         complete = True
 
@@ -149,7 +151,7 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
                 for i in charapters:
                     show_incomplete.append(i)
 
-        charapters.append({'contentType': 'tv', 'showId': show_id, 'dbId': show_tvId, 'title': show_title, 'SE': {}})
+        charapters.append({'contentType': 'tv', 'showId': show_id, 'dbId': show_tvId, 'title': show_title, 'release': show_release})
         
         # Acá vamos a hacer una excepción con Dahmer – Monster: The Jeffrey Dahmer Story, ya que es conocida simplemente como Dahmer. Esto supongo que lo iré haciendo con diferentes series según convenga.
         charapters_except = []
@@ -177,11 +179,11 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
         
         movie_title_es = consult_movie['title']
         movie_id = movie['id']
-
-        #print(movie)
+        movie_release = movie['releaseDate'].split('-')[0]
+        
 
         # movie_append = [movie_title_es, movie['theMovieDbId'], ['movie', movie_id]]
-        movies.append({'contentType': 'movie', 'showId': movie_id, 'dbId': movie['theMovieDbId'], 'title': movie_title_es})
+        movies.append([movie_title_es, {'contentType': 'movie', 'showId': movie_id, 'dbId': movie['theMovieDbId'], 'title': movie_title_es, 'release': movie_release}])
 
         # Sacamos el titulo y el ID de TMDB. Esto mismo debo hacer con las series, no es complicado.
         # movies.append(movie_append)
@@ -192,8 +194,6 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
         cola.append(movie)
 
  
-    print(f'\n{cola}\n')
-
     return cola  # Esto devuelve una lista de listas con la serie! Un ejemplo sería el siguiente: [['La casa del Dragón S01E05', 234252, ['tv', 109]]]!! Para cada lista, los dos últimos indices pertenecen al ID del TheMovieDb y el ID del request del Ombi. Esto es útil para poder eliminar la requests desde API de OMBI.
 
     # Eso se tiene que hacer en bucle desde fuera.
@@ -202,6 +202,7 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
 
     # TODO: Crear función para extraer las peliculas también.
 
+    
 
 
 # Función para eliminar el requests de Ombi.
