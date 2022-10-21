@@ -20,6 +20,12 @@ class SeasonEpisodeError(Exception):
     def __str__(self):
         return(repr(self.value))
 
+class TorrentNotMatchError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))
 
 
 
@@ -78,27 +84,38 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
     # Esta sub función la usamos para obtener el estado del torrent. Esto lo sacamos en una función aparte, ya que, es lo que por separado, toca ejectutar constantemente para obtener SIEMRPE el estado del torrent.
     def get_state():
-        my_hash = 'idk'
-        state = 'idk'
-        path = 'idk'
-        name_torrent = 'idk'
+        my_hash = ''
+        state = ''
+        path = ''
+        name_torrent = ''
+        content_path = ''
 
 
         torrents_list = qb.torrents()
+        
+        torrents_list_names = []
+
+        for name_torrent_s in torrents_list:
+            torrents_list_names.append(name_torrent_s['name'])
+
+        
+        if torrent_name not in torrents_list_names:
+                raise TorrentNotMatchError('(error 03) El nombre de tu torrent no coincide ninguno en descarga.')
+                exit()
 
         # Vemos si el nombre proporcionado coincide con alguno de la lista actual del qBitTorrent.
-        if len(torrents_list) == 0:
-            print('No hay ningún torrent con ese nombre')
-            exit()
-
         for download in torrents_list:
 
-            # ¡Viendo un poco los torrents de diferentes descargas, algunas traen dobles espacios, ni puta idea de por qué, pero para solucionar eso básicmante eliminamos uno de esos espacios para que puedan coincidir perfectamente!
+
+
+            # ¡Viendo un poco los torrents de diferentes descarsgas, algunas traen dobles espacios, ni puta idea de por qué, pero para solucionar eso básicmante eliminamos uno de esos espacios para que puedan coincidir perfectamente!
             if download['name'].replace('  ', ' ') != name:
                 my_hash = download['hash']  # Extraemos el hash.
                 state = download['state']  # Extraemos el estado actual.
                 path = download['save_path']  # Extraemos la ruta de descarga.
                 name_torrent = download['name']  # Extraemos el nombre del torrent.
+                content_path = download['content_path']
+
                 continue
 
 
@@ -108,22 +125,29 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                 state = download['state']
                 path = download['save_path']
                 name_torrent = download['name']
-
+                content_path = download['content_path']
 
             else:
                 my_hash = download['hash']
                 state = download['state']
                 path = download['save_path']
                 name_torrent = download['name']
+                content_path = download['content_path']
+
 
             break
 
-        return [state, path, my_hash, name_torrent]
+        return [state, path, my_hash, name_torrent, content_path]
 
 
     # Handler en sí.
     while True:
         handler_state = get_state()
+
+        # torrent_files = qb.get_torrent_files(handler_state[2])
+        # print(f' - {torrent_files} -')
+
+
         print(f'====================================\n Siguiendo: {handler_state[2]}')
         print(f' {handler_state[0]} \n====================================\n\n\n')
         
@@ -131,19 +155,24 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         if base_route[-1] == '/' or base_route[-1] == '\\':
             base_route = base_route[:-1]
-
-
+            
+            
+        #print(handler_state[4])
+        #print(base_route)
+        
 
         # Acá es donde empezamos a manejar los archivos. ¡Con esto, ya verificamos que descargó y simplemente tenemos que idear una buena forma de detectar si es una serie o es una pelicula! (probablemente OMBI ayude)
         if handler_state[0] == 'stalledUP' or handler_state[0] is None or handler_state[0] == 'uploading':  # Esto quiere decir que está seedeando, terminó de descargar o está "subiendo".
             
             delete_torrent = qb.delete(handler_state[2])
-            print(delete_torrent)
 
 
             # download_route = handler_state[1]  # ¡Ruta donde se descargó el torrent!
-            folder_download = os.listdir(f'{base_route}/{handler_state[3]}')  # Lista de archivos de donde se descargó el torrent.
-            
+            if os.path.isdir(f'{handler_state[4]}'):
+                folder_download = os.listdir(f'{base_route}/{handler_state[3]}')  # Lista de archivos de donde se descargó el torrent.
+            else:
+                folder_download = [os.path.basename(handler_state[4])]
+                
             
             
 
@@ -162,17 +191,23 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
             # Creo una lista con SOLO los archivos "mkv"
             video_files = []
-            new_folder_download = os.listdir(f'{base_route}/{handler_state[3]}')
             
             for video_file in folder_download:
                 if '.mkv' in video_file or '.MKV' in video_file:
                     video_files.append(video_file)
 
 
+
             # Renombrando archivos!
             if len(video_files) == 1:
+
                 if torrent_type == 'tv':
-                    tv_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
+                    if os.path.isdir(handler_state[4]):
+                        tv_name = f'{base_route}/{handler_state[3]}'
+
+                    else:
+                        tv_name = f'{base_route}'
+
 
                     new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
 
@@ -181,12 +216,6 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
                     if season_remake[0] == '0' and len(season_remake) == 2:
                         season_remake = season_remake[1:]
-
-                        
-                    # if episode_remake[0] == '0' and len(episode_remake) == 2:
-                        # episode_remake = episode_remake[1:]
-
-
 
 
                     new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.mkv'
@@ -197,17 +226,47 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     except:
                         pass
 
+                    
+                    try:
+                        os.mkdir(f'{route_moviesdb}/tv')
+                        os.mkdir(f'{route_moviesdb}/movies')
+            
+                    except:
+                        pass
 
-                    os.rename(tv_name, f'{base_route}/{handler_state[3]}/{season_remake}x{episode_remake}.mkv')
+
+                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
+
+                    
+                    shutil.move(f'{base_route}/{season_remake}x{episode_remake}.mkv', new_tv_name)
+
 
 
                 else:
-                    movie_name = f'{base_route}/{handler_state[3]}/{video_files[0]}'
+                    if os.path.isdir(handler_state[4]):
+                        movie_name = f'{base_route}/{handler_state[3]}'
+
+                    else:
+                        movie_name = f'{base_route}'
+
+
+
                     new_movie_name = f'{base_route}/movies/{original_name} ({content_release}).mkv'
 
+                    
+                    try:
+                        os.mkdir(f'{route_moviesdb}/tv')
+                        os.mkdir(f'{route_moviesdb}/movies')
+            
+                    except:
+                        pass
 
-                    os.rename(movie_name, f'{base_route}/{handler_state[3]}/{original_name} ({content_release}).mkv')
 
+                    os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).mkv')
+
+                    shutil.move(f'{movie_name}/{original_name} ({content_release}).mkv', new_movie_name)
+
+            
 
 
 
@@ -217,22 +276,6 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
                 #f'{route_moviesdb}/{original_name} {season}{episode}'
 
-            try:
-                os.mkdir(f'{route_moviesdb}/tv')
-                os.mkdir(f'{route_moviesdb}/movies')
-            
-            except:
-                pass
-
-
-            if torrent_type == 'tv':
-                shutil.move(f'{base_route}/{handler_state[3]}/{season_remake}x{episode_remake}.mkv', new_tv_name)
-
-            else:
-                shutil.move(f'{base_route}/movies/{original_name} ({content_release}).mkv', new_movie_name)
-
-            
-
             print(f'Se ha hecho la descarga de {original_name}')
             break
 
@@ -240,3 +283,10 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         # ¡Para estar pendiente de los torrents, pero que no esté ejecutandoce siempre, lo ponemos a esperar un tiempo, para que luego vuelva a ver el estado!
         time.sleep(handler_time)
+
+        # Riverdale - Temporada 1 [HDTV 720p][Cap.105][AC3 5.1 Español Castellano]
+
+        # torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX', content_release = '2005'
+
+
+torrent_handler('La Casa del Dragon - Temporada 1 [HDTV 720p][Cap.102][AC3 5.1 Castellano][www.atomoHD.wf]', 'Mikasa del dragon', 'C:/users/ferdh/Downloads/', 'tv', 'http://127.0.0.1:8080/', 'Fer', '092531', 10, 'S01', 'E02', content_release = '302')

@@ -99,11 +99,12 @@ d = download('Dahmer S01E05', 'http://jacketthost:9197', 'jackettAPIKey', 'http:
 
         - qbtorrent_pass: **(str)** | Contraseña de tu usuario en tu qBittorrent!
 
+        - download_path: **(str)** | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva.  ***RUTA ABSOLUTA!!!!***
+
         - max_size: **(int)** | Peso máximo **(en MB) que podrán tener los archivos.
 
         - low_discard: **(bool)** | Si desea que se descarte el contenido en 720p, active esto!
 
-        - download_path: **(str)** | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva.  ***RUTA ABSOLUTA!!!!***
     
     - **Return**:
         - Nombre del torrent descargado (puede que en el futuro cambiemos lo que devuele)

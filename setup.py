@@ -13,7 +13,7 @@ setup(
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     packages = ['MovieTool'],
-    version = '3.2.1',
+    version = '3.3',
     license = 'MIT',
     description = "Descarga tus peliculas y series, automatiza todo y crea tu propio Netflix (hecho con fines de aprendizaje) 100% funcional (y con más contenido que el de Netflix) haciendo uso de Plex, Ombi y otras tecnologías más. ⭐",
     author = 'ElHaban3ro',
@@ -25,3 +25,4 @@ setup(
     ],
     install_requires=["pandas==1.4.4", "python-qbittorrent==0.4.2", "lxml==4.9.1", "feedparser==6.0.10"]
 )
+

@@ -77,6 +77,8 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     # Accediendo!
     feed = feedparser.parse(url_consult)  # Se lee el RSS. ¡Devuelve una lista de diccionarios con los resultados!
+
+
     # Rastreo el estado 404 por si se ingresa mal el host del jackett!
     if feed['status'] == 404:
         raise Exception('(JackettHostError, error 02) Hay un erorr con la url del Jackett. Revisala. Puede que se deba a que esté mal redactada, que no esté corriendo el servidor o que esté en otro puerto.')
@@ -179,4 +181,3 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     except IndexError:
         pass
-
