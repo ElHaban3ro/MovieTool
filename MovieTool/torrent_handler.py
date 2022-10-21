@@ -193,15 +193,16 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
             video_files = []
             
             for video_file in folder_download:
-                if '.mkv' in video_file or '.MKV' in video_file:
+                if '.mkv' in video_file or '.MKV' in video_file or '.avi' in video_file or '.AVI' in video_file:
                     video_files.append(video_file)
 
 
-
+            print(video_files)
             # Renombrando archivos!
             if len(video_files) == 1:
 
                 if torrent_type == 'tv':
+
                     if os.path.isdir(handler_state[4]):
                         tv_name = f'{base_route}/{handler_state[3]}'
 
@@ -235,10 +236,11 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
 
 
+
                     os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
 
                     
-                    shutil.move(f'{base_route}/{season_remake}x{episode_remake}.mkv', new_tv_name)
+                    shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.mkv', new_tv_name)
 
 
 
@@ -251,7 +253,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
 
-                    new_movie_name = f'{base_route}/movies/{original_name} ({content_release}).mkv'
+                    new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).mkv'
 
                     
                     try:
@@ -261,7 +263,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     except:
                         pass
 
-
+                    print(f'{movie_name}/{video_files[0]}')
                     os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).mkv')
 
                     shutil.move(f'{movie_name}/{original_name} ({content_release}).mkv', new_movie_name)
@@ -288,5 +290,3 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         # torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX', content_release = '2005'
 
-
-torrent_handler('La Casa del Dragon - Temporada 1 [HDTV 720p][Cap.102][AC3 5.1 Castellano][www.atomoHD.wf]', 'Mikasa del dragon', 'C:/users/ferdh/Downloads/', 'tv', 'http://127.0.0.1:8080/', 'Fer', '092531', 10, 'S01', 'E02', content_release = '302')
