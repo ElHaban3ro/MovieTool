@@ -47,14 +47,13 @@ Módulos
 
           - ombi_apikey: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
     
-    
 
         - **Return**:
           - Esto devuelve una lista de listas con la serie! Un ejemplo sería el siguiente:
 
             - **example**:
               - ```console
-                > [['La casa del Dragón S01E05', {'contentType': 'movie', 'showId': 234252, 'dbId': 777, 'title': 'La Casa Del Dragón'}]
+                > [['La casa del Dragón S01E05', {'contentType': 'movie', 'showId': 234252, 'dbId': 777, 'title': 'Sos mi peli favorita', 'release': '1987'}]
                 ```
 
              Para cada lista, los dos últimos indices pertenecen al ID del TheMovieDb y el ID del request del Ombi. Esto es útil para poder eliminar la requests desde API de OMBI.
@@ -70,7 +69,7 @@ Módulos
 
           - ombi_apikey: **(str)** | Clave de la api de OMBI. Importante para efectuar correctamente las consultas.
 
-          - content_type: **(str)** | Tipo de contenido a eliminar. Este parametro solo puede recibir 2 valores: "**movies**" o "**tv**", siendo tv correspondiente a las series.
+          - content_type: **(str)** | Tipo de contenido a eliminar. Este parametro solo puede recibir 2 valores: "**movie**" o "**tv**", siendo tv correspondiente a las series.
     
         - **Return**:
           - Info string.
@@ -105,11 +104,7 @@ Módulos
 
 
           - **Return**:
-            - La lista de los archivos que se consideraron multimedia y que se pasaron a la nueva carpeta de esa serie/pelicula.
-              - **Example**:
-                - ```console
-                  > ['S01E01', 'S01E04'. 'S05E666']
-                  ```
+            - None
 
 
 
