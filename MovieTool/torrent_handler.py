@@ -231,8 +231,8 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     
                     print('Creando carpetas tv y movies.')
                     try:
-                        os.mkdir(f'{route_moviesdb}/tv')
-                        os.mkdir(f'{route_moviesdb}/movies')
+                        os.mkdir(f'{route_moviesdb}/tv/')
+                        os.mkdir(f'{route_moviesdb}/movies/')
             
                     except:
                         pass
@@ -250,12 +250,12 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
                     print('renombrando...')
-                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.{video_formats[0]}')
+                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
                     time.sleep(2)
                     
                     
                     print('moviendo')
-                    shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.{video_formats}', new_tv_name)
+                    shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.mkv', new_tv_name)
 
 
 
@@ -267,9 +267,11 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     else:
                         movie_name = f'{base_route}'
 
+    
+                    if route_moviesdb[-1] == '/' or route_moviesdb[-1] == '\\':
+                        route_moviesdb = route_moviesdb[:-1]
 
-
-                    new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).{video_formats}'
+                    new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).mkv'
 
                     print('Creando rutas para pelis.')
                     try:
@@ -280,9 +282,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
 
                     print(f'{movie_name}/{video_files[0]}')
-                    os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).{video_formats}')
+                    os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).mkv')
 
-                    shutil.move(f'{movie_name}/{original_name} ({content_release}).{video_formats}', new_movie_name)
+                    shutil.move(f'{movie_name}/{original_name} ({content_release}).mkv', new_movie_name)
 
             
 
