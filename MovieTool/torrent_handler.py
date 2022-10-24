@@ -192,13 +192,18 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
             # Creo una lista con SOLO los archivos "mkv"
             video_files = []
+            video_formats = []
             
             for video_file in folder_download:
-                if '.mkv' in video_file or '.MKV' in video_file or '.avi' in video_file or '.AVI' in video_file:
+                if '.mkv' in video_file or '.MKV' in video_file or '.avi' in video_file or '.AVI' in video_file or '.mp4' in video_file or '.MP4' in video_file:
+                    vf = video_file[::-1]
+                    vf = video_file[:vf.find('.')][::-1]
+                    video_formats.append(vf)
+                    
                     video_files.append(video_file)
 
-
-            print(video_files)
+            
+            print(f' ======> {video_formats}')
             # Renombrando archivos!
             if len(video_files) == 1:
 
@@ -222,7 +227,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         route_moviesdb = route_moviesdb[:-1]
                         
                     new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
-                    new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.mkv'
+                    new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.{video_formats[0]}'
                     
                     print('Creando carpetas tv y movies.')
                     try:
@@ -245,16 +250,17 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
                     print('renombrando...')
-                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
+                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.{video_formats[0]}')
                     time.sleep(2)
                     
                     
                     print('moviendo')
-                    shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.mkv', new_tv_name)
+                    shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.{video_formats}', new_tv_name)
 
 
 
                 else:
+                    print('movie')
                     if os.path.isdir(handler_state[4]):
                         movie_name = f'{base_route}/{handler_state[3]}'
 
@@ -263,9 +269,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
 
-                    new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).mkv'
+                    new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).{video_formats}'
 
-                    
+                    print('Creando rutas para pelis.')
                     try:
                         os.mkdir(f'{route_moviesdb}/tv')
                         os.mkdir(f'{route_moviesdb}/movies')
@@ -274,9 +280,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
 
                     print(f'{movie_name}/{video_files[0]}')
-                    os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).mkv')
+                    os.rename(f'{movie_name}/{video_files[0]}', f'{movie_name}/{original_name} ({content_release}).{video_formats}')
 
-                    shutil.move(f'{movie_name}/{original_name} ({content_release}).mkv', new_movie_name)
+                    shutil.move(f'{movie_name}/{original_name} ({content_release}).{video_formats}', new_movie_name)
 
             
 
