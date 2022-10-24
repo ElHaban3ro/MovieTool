@@ -1,10 +1,10 @@
-# MovieTool (v3.5)
+MovieTool (v3.5)
+**********************
 
 
+Módulos
 
-## Módulos
-
-----
+**********************
 - ### ***download_torrents***:
     - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size: int, low_discard: bool)
     
