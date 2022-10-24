@@ -167,7 +167,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
             # download_route = handler_state[1]  # ¡Ruta donde se descargó el torrent!
             
-            print(f'---------> > > {handler_staet[4]} < < <----------')
+            print(f'---------> > > {handler_state[4]} < < <----------')
             
             if os.path.isdir(handler_state[4]) == True:
                 folder_download = os.listdir(f'{base_route}/{handler_state[3]}')  # Lista de archivos de donde se descargó el torrent.
