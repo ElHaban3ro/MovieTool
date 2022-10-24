@@ -10,7 +10,7 @@
 ## Detalles del proyecto
 
 ---
-*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí](https://github.com/ElHaban3ro/MTRA)! Si eres programador, puedes ver la documentación [oficial aquí](https://movietool.readthedocs.io/es/latest/)*.
+*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí](https://github.com/ElHaban3ro/MTRA)! Si eres programador, puedes ver la documentación [oficial aquí](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*.
 
 ---
 
@@ -51,6 +51,8 @@ Hacemos uso de algunas apps para cumplir nuestro objetivo, y que se proporcionan
 
 ## Instalación (para desarrolladores)
 
+*Te recomendamos leer la [documentación oficial](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*
+
 ---
 La mejor idea para obtener acceso a este paquete, es haciendo uso de ***pip***:
 ```bash
@@ -82,7 +84,11 @@ tu_proyecto |
                                       download_torrents.py
                                      
                main.py (tu script principal)
+
 ```
+
+
+
 
 
 
@@ -91,7 +97,7 @@ tu_proyecto |
 
 ---
 
-*Esta descripción de uso es poco detallada, si quiere más información vaya a la [documentación](https://movietool.readthedocs.io/es/latest/) ofical*
+*Esta descripción de uso es poco detallada, si quiere más información vaya a la [documentación](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md) ofical*
 
 Hacer uso de nuestros modulos es realmente **facil**. Para utilizar un módulo, se haría de la siguiente forma:
 
