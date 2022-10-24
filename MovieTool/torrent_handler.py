@@ -106,8 +106,6 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
         # Vemos si el nombre proporcionado coincide con alguno de la lista actual del qBitTorrent.
         for download in torrents_list:
 
-
-
             # ¡Viendo un poco los torrents de diferentes descarsgas, algunas traen dobles espacios, ni puta idea de por qué, pero para solucionar eso básicmante eliminamos uno de esos espacios para que puedan coincidir perfectamente!
             if download['name'].replace('  ', ' ') != name:
                 my_hash = download['hash']  # Extraemos el hash.
@@ -168,7 +166,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
             # download_route = handler_state[1]  # ¡Ruta donde se descargó el torrent!
-            print(handler_state[4])
+            
+            print(f'---------> > > {handler_staet[4]} < < <----------')
+            
             if os.path.isdir(handler_state[4]) == True:
                 folder_download = os.listdir(f'{base_route}/{handler_state[3]}')  # Lista de archivos de donde se descargó el torrent.
             else:
