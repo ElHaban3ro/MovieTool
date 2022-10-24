@@ -205,23 +205,35 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                 if torrent_type == 'tv':
 
                     if os.path.isdir(handler_state[4]):
-                        tv_name = f'{base_route}/{handler_state[3]}'
+                        tv_name = f'{base_route[1]}/{handler_state[3]}'
 
                     else:
-                        tv_name = f'{base_route}'
+                        tv_name = f'{handler_state[1]}'
 
 
-                    new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
 
                     season_remake = season[1:]
                     episode_remake = episode[1:]
 
                     if season_remake[0] == '0' and len(season_remake) == 2:
                         season_remake = season_remake[1:]
-
-
+                        
+                    if route_moviesdb[-1] == '/' or route_moviesdb[-1] == '\\':
+                        route_moviesdb = route_moviesdb[:-1]
+                        
+                    new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
                     new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.mkv'
                     
+                    print('Creando carpetas tv y movies.')
+                    try:
+                        os.mkdir(f'{route_moviesdb}/tv')
+                        os.mkdir(f'{route_moviesdb}/movies')
+            
+                    except:
+                        pass
+                    
+                    
+                    print('Creando carpeta de la serie.')
                     try:
                         os.mkdir(new_tv_name_route)
 
@@ -229,18 +241,15 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
 
                     
-                    try:
-                        os.mkdir(f'{route_moviesdb}/tv')
-                        os.mkdir(f'{route_moviesdb}/movies')
-            
-                    except:
-                        pass
-
-
-
-                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
-
                     
+
+
+                    print('renombrando...')
+                    os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
+                    time.sleep(2)
+                    
+                    
+                    print('moviendo')
                     shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.mkv', new_tv_name)
 
 
