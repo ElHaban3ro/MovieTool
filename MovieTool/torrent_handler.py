@@ -1,3 +1,4 @@
+# codding=ascii
 from feedparser import exceptions
 from qbittorrent import Client
 import time
@@ -59,7 +60,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
     episode: str | Si el parametro de "torrent_type" es "tv", es necesario especificar el episodio con el formato EXX, donde "X" es el número de episodio. Ej: E02.
 
     content_release: str | Fecha de estreno del contenido dado!
-
+    
     """
     
     torrent_category = ['tv', 'movie']
@@ -113,6 +114,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                 path = download['save_path']  # Extraemos la ruta de descarga.
                 name_torrent = download['name']  # Extraemos el nombre del torrent.
                 content_path = download['content_path']
+                seeds = download['num_seeds']
 
                 continue
 
@@ -124,6 +126,8 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                 path = download['save_path']
                 name_torrent = download['name']
                 content_path = download['content_path']
+                seeds = download['num_seeds']
+
 
             else:
                 my_hash = download['hash']
@@ -131,16 +135,21 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                 path = download['save_path']
                 name_torrent = download['name']
                 content_path = download['content_path']
+                seeds = download['num_seeds']
+
 
 
             break
 
-        return [state, path, my_hash, name_torrent, content_path]
+        return [state, path, my_hash, name_torrent, content_path, seeds]
 
 
     # Handler en sí.
     while True:
         handler_state = get_state()
+        
+
+
 
         # torrent_files = qb.get_torrent_files(handler_state[2])
         # print(f' - {torrent_files} -')
@@ -304,7 +313,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
         # ¡Para estar pendiente de los torrents, pero que no esté ejecutandoce siempre, lo ponemos a esperar un tiempo, para que luego vuelva a ver el estado!
         time.sleep(handler_time)
 
+        return 1
         # Riverdale - Temporada 1 [HDTV 720p][Cap.105][AC3 5.1 Español Castellano]
 
         # torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX', content_release = '2005'
-

@@ -8,7 +8,7 @@ from qbittorrent import Client
 
 
 
-def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size = 2000, low_discard = True):
+def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size = 2000, delete_torrents_die = True):
     """
     Descarga los torrents de las peliculas con ayuda de este módulo.
 
@@ -26,11 +26,12 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     qbtorrent_pass: str | Contraseña de tu usuario en tu qBitTorrent!
 
+    download_path: str | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva. RUTA ABSOLUTA!!!!
+
     max_size: int | Peso máximo (en MB) que podrán tener los archivos.
 
-    low_discard: bool | Si desea que se descarte el contenido en 720p, active esto!
+    delete_torrents_die: bool | Elimina la descarga de torrents muertos (con 0 seeders. Si esto se establece como False, el torrent quedará dentro del qBittorrent, esperando...)
 
-    download_path: str | Ruta donde se descargarán los archivos virgenes, sin haberlos procesado y renombrado, por tanto, no des la ruta defenitiva. RUTA ABSOLUTA!!!!
     """
 
 
@@ -78,7 +79,6 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
     # Accediendo!
     feed = feedparser.parse(url_consult)  # Se lee el RSS. ¡Devuelve una lista de diccionarios con los resultados!
 
-
     # Rastreo el estado 404 por si se ingresa mal el host del jackett!
     if feed['status'] == 404:
         raise Exception('(JackettHostError, error 02) Hay un erorr con la url del Jackett. Revisala. Puede que se deba a que esté mal redactada, que no esté corriendo el servidor o que esté en otro puerto.')
@@ -92,57 +92,40 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         torrents.append([torrent['size'], torrent['link'], torrent['title']])
 
         
-
     max_size_bytes = max_size * 1000000
 
 
-    torrents_definitive_list = []
-    
-
-    # TODO: si se prefiere que los torrents que contengan 720, comentar las siguientes lineas de código.
-    for torrents_info_count, torrents_info in enumerate(torrents):
-        # Sí el nombre del torrent no contiene "720" y, sí el peso del torrent no supera el ya pasado a la función como parametro:
-        if low_discard == True:
-            if '720' not in torrents_info[-1] and int(torrents_info[0]) <= max_size_bytes:
-                torrents_definitive_list.append(torrents[torrents_info_count])
-
-        else:
-            if int(torrents_info[0]) <= max_size_bytes:
-                torrents_definitive_list.append(torrents[torrents_info_count])
-
-
+    torrents_definitive_list = torrents
     if len(torrents_definitive_list) == 0:
         print('(NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
+
+    try:
+        # Conexión al servidor de qBitTorrent!
+        global qb
+        qb = Client(qbtorrent_host)
+
+    # Excepción si la url pasa está mal.
+    except requests.exceptions.ConnectionError:
+        print('(qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+        exit()
+        
+    # Iniciamos sesión en qBitTorrent para empezar a usarlo.
+    qbtorrent_login = qb.login(qbtorrent_user, qbtorrent_pass)
+    # print(qbtorrent_login)
+        
 
 
     # Ahora sí, descarga de los torrents en sí.
 
-    try:
-        f_torrent = torrents_definitive_list[0] # Tomamos el primero de la lista. Esto aún se puede barajar, y ver si lo totamos otro torrent por diferente razón. Recordar que por lo menos, el RSS del jackett no devuelve los seeders ni peers para obtener más metadata, por tanto, nos vemos por este lado restringidos.
+    for f_torrent_c, f_torrent in enumerate(torrents_definitive_list):
 
         # Config torrents var's.
-        torrent_link = f_torrent[1]
         torrent_size = f_torrent[0]
+        torrent_link = f_torrent[1]
         torrent_name = f_torrent[2]
         
 
 
-        try:
-            # Conexión al servidor de qBitTorrent!
-            global qb
-            qb = Client(qbtorrent_host)
-
-
-
-        # Excepción si la url pasa está mal.
-        except requests.exceptions.ConnectionError:
-            print('(qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
-            exit()
-        
-        # Iniciamos sesión en qBitTorrent para empezar a usarlo.
-        qbtorrent_login = qb.login(qbtorrent_user, qbtorrent_pass)
-        # print(qbtorrent_login)
-        
 
 
         # Manejo de contraseña/usuario incorrecto.
@@ -164,21 +147,41 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
 
         for at in active_torrents:
-            re_active.append({'added_on': at['added_on'], 'hash': at['hash'], 'name': at['name']})
+            re_active.append({'added_on': at['added_on'], 'hash': at['hash'], 'name': at['name'], 'seeds': at['num_seeds']})
         
 
         active_torrents_sort = re_active[::-1]
         
         actual_torrent = active_torrents_sort[0]
         torrent_name = actual_torrent['name']
+        torrent_seeds = actual_torrent['seeds']
+        torrent_hash = actual_torrent['hash']
 
         
 
-        return torrent_name
+
+        if torrent_seeds == 0:
+            if delete_torrents_die:
+                qb.delete(torrent_hash)
+                print('Hemos encontrado un torrent muerto!')
+
+                if f_torrent_c == len(torrents_definitive_list) - 1:
+                    print('\n\nNo se encontraron torrents posibles, es probable que la serie/pelicula sea demasiado reciente, el nombre de la serie/pelicula no está bien traducida (culpa del ombi) o todos los torrents encontrados tienen 0 seeders. ¿Cómo reparar esto? Es posible arreglarlo (no podemos asegurar que se arregle) que el peso máximo por film esté causando y filtrando mal, lo puedes subir un poco (por si lo tienes muy bajo) e intentar de nuevo.\n\n')
+
+                    return 0
+                    break
+
+                continue
 
 
+            else:
+                continue
 
+        else:
+            if int(torrent_size) > max_size_bytes:
+                print('El torrent encontrado sobrepasa el peso máximo.')
+                continue
 
-    except IndexError:
-        pass
-
+            else:
+                return torrent_name
+                break

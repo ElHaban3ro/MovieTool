@@ -6,7 +6,7 @@ Módulos
 
 ---
 - ### ***download_torrents***:
-    - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size: int, low_discard: bool)
+    - > download_torrents.download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: str, qbtorrent_user: str, qbtorrent_pass: str, download_path: str, max_size: int, delete_torrents_die: bool)
     
     - **Descripción:**
         - Usa este modulo para descargar el contenido multimedia en español. Como los parametros pueden indicar, hace falta tener corriendo en tu computadora el server de Jackett (muy facil de instalar) y un server de qBittorrent (aún más facil de hacer).
@@ -29,7 +29,11 @@ Módulos
 
         - max_size: **(int)** | Peso máximo **(en MB) que podrán tener los archivos.
 
-        - low_discard: **(bool)** | Si desea que se descarte el contenido en 720p, active esto!
+        - delete_torrents_die: **(bool)** | Elimina la descarga de torrents muertos (con 0 seeders. Si esto se establece como False, el torrent quedará dentro del qBittorrent, esperando...)
+
+
+
+
 
     
     - **Return**:
