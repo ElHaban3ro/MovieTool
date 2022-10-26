@@ -10,7 +10,7 @@
 ## Detalles del proyecto
 
 ---
-*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí](https://elhaban3ro.github.io/MTRA/)! Si por otro lado eres programador, puedes ver la documentación [oficial](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*.
+*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí](https://elhaban3ro.github.io/MovieTool-User/)! Si por otro lado eres programador, puedes ver la documentación [oficial](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*.
 
 --
 
@@ -41,7 +41,7 @@ Hacemos uso de algunas apps para cumplir nuestro objetivo, y que se proporcionan
 ## Descargas
 *Esta zona va dedicada a todos los usuarios que quieren montarse su propio servidor de contenido multimedia de manera sencilla.*
 
--  Para empezar es necesario que descargue **MovieTool Runner Apps**, la cual instala en su sistema operativo (Windows o Linux) las aplicaciones necesarias para poder crear el servidor. *(La documentación para la configuración de cada uno de los programas que se descargan está junto al ejecutable!)* [![Download MovieToolRunnerApps](https://img.shields.io/badge/Download-MovieTool_Runner_Apps-red.svg?style=flat-square)](https://elhaban3ro.github.io/MTRA/)
+-  Para empezar es necesario que descargue **MovieTool Runner Apps**, la cual instala en su sistema operativo (Windows o Linux) las aplicaciones necesarias para poder crear el servidor. *(La documentación para la configuración de cada uno de los programas que se descargan está junto al ejecutable!)* [![Download MovieToolRunnerApps](https://img.shields.io/badge/Download-MovieTool_Runner_Apps-red.svg?style=flat-square)](https://elhaban3ro.github.io/MovieTool-User/)
 
 
 - Comming Soon.
