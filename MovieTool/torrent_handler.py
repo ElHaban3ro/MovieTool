@@ -312,8 +312,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         # ¡Para estar pendiente de los torrents, pero que no esté ejecutandoce siempre, lo ponemos a esperar un tiempo, para que luego vuelva a ver el estado!
         time.sleep(handler_time)
-
-        return 1
+        
         # Riverdale - Temporada 1 [HDTV 720p][Cap.105][AC3 5.1 Español Castellano]
 
         # torrent_name: str, original_name: str, route_moviesdb: str, torrent_type: str, qbtorrent_host: str, qbtorrent_user='admin', qbtorrent_pass='adminadmin', handler_time = 10, season = 'SXX', episode = 'EXX', content_release = '2005'

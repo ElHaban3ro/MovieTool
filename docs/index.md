@@ -32,12 +32,8 @@ Módulos
         - delete_torrents_die: **(bool)** | Elimina la descarga de torrents muertos (con 0 seeders. Si esto se establece como False, el torrent quedará dentro del qBittorrent, esperando...)
 
 
-
-
-
-    
     - **Return**:
-        - Nombre del torrent descargado (puede que en el futuro cambiemos lo que devuele)
+        - Nombre del torrent descargado o 0 si no encontró contenido valido.
 
 
 
