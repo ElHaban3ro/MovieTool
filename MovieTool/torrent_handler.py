@@ -102,8 +102,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         
         if torrent_name not in torrents_list_names:
-                raise TorrentNotMatchError('(error 03) El nombre de tu torrent no coincide ninguno en descarga.')
-                time.sleep(15)
+                print(f'[{str(datetime.now())[:-7]}] No hay contenido con el nombre de la pelicula/serie')
                 exit()
 
         # Vemos si el nombre proporcionado coincide con alguno de la lista actual del qBitTorrent.

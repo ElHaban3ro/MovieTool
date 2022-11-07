@@ -133,7 +133,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         # Manejo de contraseña/usuario incorrecto.
         if qbtorrent_login == 'Fails.':
             raise ValueError('(qBTorrentCredentialsError, error 04) Al parecer, las credenciales de tu qBitTorrent (usuario o contraseña) están mal. Como recordatorio: la contraseña por defecto del qBitTorrent es "adminadmin", y por otro lado, el usuario es "admin".')
-        
+            time.sleep(15)
 
 
 
