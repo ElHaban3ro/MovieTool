@@ -187,4 +187,4 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
             else:
                 return [torrent_name, 'found']
-                break
+                exit()
