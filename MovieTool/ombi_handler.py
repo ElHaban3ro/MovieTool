@@ -1,5 +1,5 @@
 import requests
-from datetime import date
+from datetime import date, datetime
 
 # ombi_login = requests.post('http://mikoin.sytes.net:5000/api/v1/Logging')
 
@@ -42,7 +42,7 @@ def ombi_requests(ombi_host: str, ombi_apikey: str):
     #try:
     tv_requests = ombi_tv.json()  # Esto nos devolvería ya las series que se han pedido.
     #except json.decoder.JSONDecodeError:
-    #    print('cero')
+    #    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] cero')
 
     # Claramente en formato JSON.
     movie_requests = ombi_movies.json()
