@@ -182,6 +182,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         else:
             if int(torrent_size) > max_size_bytes:
                 print(f'\n\n[{str(datetime.now())[:-7]}] El torrent encontrado sobrepasa el peso máximo.')
+                qb.delete(torrent_hash)
                 continue
 
             else:
