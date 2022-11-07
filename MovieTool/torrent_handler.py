@@ -157,16 +157,12 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
 
         print(f'[{str(datetime.now())[:-7]}] ====================================\n Siguiendo: {handler_state[2]}')
-        print(f'[{str(datetime.now())[:-7]}]  {handler_state[0]} \n====================================\n\n\n')
-        
-        base_route = handler_state[1]
+        print(f'{handler_state[0]} \n====================================\n\n\n')
+                                  
 
         if base_route[-1] == '/' or base_route[-1] == '\\':
             base_route = base_route[:-1]
             
-            
-        #print(handler_state[4])
-        #print(base_route)
         
 
         # Acá es donde empezamos a manejar los archivos. ¡Con esto, ya verificamos que descargó y simplemente tenemos que idear una buena forma de detectar si es una serie o es una pelicula! (probablemente OMBI ayude)

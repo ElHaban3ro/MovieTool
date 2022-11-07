@@ -73,7 +73,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         url_consult = f'{jacket_host}/{parameters}'  # ¡Url lista para consulta!
 
 
-    print(f'[{str(datetime.now())[:-7]}] Haciendo la busqueda de {search}.')
+    print(f'\n\n[{str(datetime.now())[:-7]}] Haciendo la busqueda de {search}.')
 
 
 
@@ -98,7 +98,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     torrents_definitive_list = torrents
     if len(torrents_definitive_list) == 0:
-        print(f'[{str(datetime.now())[:-7]}] (NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
+        print(f'\n\n[{str(datetime.now())[:-7]}] (NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
 
     try:
         # Conexión al servidor de qBitTorrent!
@@ -107,7 +107,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     # Excepción si la url pasa está mal.
     except requests.exceptions.ConnectionError:
-        print(f'[{str(datetime.now())[:-7]}] (qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+        print(f'\n\n[{str(datetime.now())[:-7]}] (qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
         time.sleep(15)
         exit()
         
@@ -141,7 +141,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
         # Descarga final del torrent!
         t_d = qb.download_from_link(torrent_link, savepath = download_path)  # Si la ruta está mal, directamente se descarga en descargas.
-        print(f'[{str(datetime.now())[:-7]}] \nLa descarga de {torrent_name} comenzó.')
+        print(f'\n\n[{str(datetime.now())[:-7]}] La descarga de {torrent_name} comenzó.')
         time.sleep(3)
 
         active_torrents = qb.torrents(sort = 'added_on')  # Devielve TODOS los torrents activos ordenados por orden de añadido!
@@ -165,10 +165,10 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         if torrent_seeds == 0:
             if delete_torrents_die:
                 qb.delete(torrent_hash)
-                print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] Hemos encontrado un torrent muerto!')
+                print(f'\n\n[{str(datetime.now())[:-7]}] Hemos encontrado un torrent muerto!')
 
                 if f_torrent_c == len(torrents_definitive_list) - 1:
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] \n\nNo se encontraron torrents posibles, es probable que la serie/pelicula sea demasiado reciente, el nombre de la serie/pelicula no está bien traducida (culpa del ombi) o todos los torrents encontrados tienen 0 seeders. ¿Cómo reparar esto? Es posible arreglarlo (no podemos asegurar que se arregle) que el peso máximo por film esté causando y filtrando mal, lo puedes subir un poco (por si lo tienes muy bajo) e intentar de nuevo.\n\n')
+                    print(f'\n\n[{str(datetime.now())[:-7]}] No se encontraron torrents posibles, es probable que la serie/pelicula sea demasiado reciente, el nombre de la serie/pelicula no está bien traducida (culpa del ombi) o todos los torrents encontrados tienen 0 seeders. ¿Cómo reparar esto? Es posible arreglarlo (no podemos asegurar que se arregle) que el peso máximo por film esté causando y filtrando mal, lo puedes subir un poco (por si lo tienes muy bajo) e intentar de nuevo.\n\n')
 
                     return 0
                     break
@@ -181,7 +181,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
         else:
             if int(torrent_size) > max_size_bytes:
-                print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] El torrent encontrado sobrepasa el peso máximo.')
+                print(f'\n\n[{str(datetime.now())[:-7]}] El torrent encontrado sobrepasa el peso máximo.')
                 continue
 
             else:
