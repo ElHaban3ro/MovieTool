@@ -103,6 +103,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
         
         if torrent_name not in torrents_list_names:
                 raise TorrentNotMatchError('(error 03) El nombre de tu torrent no coincide ninguno en descarga.')
+                time.sleep(15)
                 exit()
 
         # Vemos si el nombre proporcionado coincide con alguno de la lista actual del qBitTorrent.
@@ -239,7 +240,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     new_tv_name_route = f'{route_moviesdb}/tv/{original_name}'
                     new_tv_name = f'{route_moviesdb}/tv/{original_name}/{season_remake}x{episode_remake}.{video_formats[0]}'
                     
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] Creando carpetas tv y movies.')
+                    print(f'[{str(datetime.now())[:-7]}] Creando carpetas tv y movies.')
                     try:
                         os.mkdir(f'{route_moviesdb}/tv/')
                         os.mkdir(f'{route_moviesdb}/movies/')
@@ -248,7 +249,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                         pass
                     
                     
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] Creando carpeta de la serie.')
+                    print(f'[{str(datetime.now())[:-7]}] Creando carpeta de la serie.')
                     try:
                         os.mkdir(new_tv_name_route)
 
@@ -259,18 +260,18 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
                     
 
 
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] renombrando...')
+                    print(f'[{str(datetime.now())[:-7]}] renombrando...')
                     os.rename(f'{tv_name}/{video_files[0]}', f'{tv_name}/{season_remake}x{episode_remake}.mkv')
                     time.sleep(2)
                     
                     
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] moviendo')
+                    print(f'[{str(datetime.now())[:-7]}] moviendo')
                     shutil.move(f'{tv_name}/{season_remake}x{episode_remake}.mkv', new_tv_name)
 
 
 
                 else:
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] movie')
+                    print(f'[{str(datetime.now())[:-7]}] movie')
                     if os.path.isdir(handler_state[4]):
                         movie_name = f'{base_route}/{handler_state[3]}'
 
@@ -283,7 +284,7 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
                     new_movie_name = f'{route_moviesdb}/movies/{original_name} ({content_release}).mkv'
 
-                    print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] Creando rutas para pelis.')
+                    print(f'[{str(datetime.now())[:-7]}] Creando rutas para pelis.')
                     try:
                         os.mkdir(f'{route_moviesdb}/tv')
                         os.mkdir(f'{route_moviesdb}/movies')

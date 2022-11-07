@@ -98,7 +98,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     torrents_definitive_list = torrents
     if len(torrents_definitive_list) == 0:
-        print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] (NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
+        print(f'[{str(datetime.now())[:-7]}] (NoContentError, error 01) No se ha podido obtener  ninguna pelicula/serie para tu búsqueda, puede que se deba a error en la busqueda, que sea demasiado nuevo el contenido o que la filtración por los parametros causó que no quedara nada.')
 
     try:
         # Conexión al servidor de qBitTorrent!
@@ -107,7 +107,8 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
     # Excepción si la url pasa está mal.
     except requests.exceptions.ConnectionError:
-        print(f'[{str(datetime.now())[:-7]}] [{str(datetime.now())[:-7]}] (qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+        print(f'[{str(datetime.now())[:-7]}] (qBitTorrentHostError, error 03) El link del host de qBitTorrent es erroneo. Puede que tu servidor esté corriendo sobre otro puerto, esté apagado o hayas escrito mal la URL. Revisalo!')
+        time.sleep(15)
         exit()
         
     # Iniciamos sesión en qBitTorrent para empezar a usarlo.

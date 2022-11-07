@@ -257,7 +257,6 @@ def ombi_delete(ombi_request_id: str, ombi_host: str, ombi_apikey: str, content_
         consult = requests.delete(f'{ombi_host}/api/v1/Request/movie/{ombi_request_id}',  params = ombi_header, headers = headers, data = ombi_header)  # TODO: ARREGLAR DE QUE SE ELIMINEN LA PELICULAS SOLICITADAS. Funciona con las series pero no con las peliculas por alguna razón.No tiene sentido. Puede ser por el desactualizado server, pero debemos esperar.
 
 
-        print(consult.headers)
        
         if consult.status_code == 200:
             return 'Eliminación completa'
