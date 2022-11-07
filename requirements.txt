@@ -1,4 +1,4 @@
 pandas
 python-qbittorrent==0.4.2
-lxml==4.9.1
+# lxml==4.9.1
 feedparser==6.0.10
