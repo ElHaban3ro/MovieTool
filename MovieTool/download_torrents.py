@@ -170,7 +170,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
                 if f_torrent_c == len(torrents_definitive_list) - 1:
                     print(f'\n\n[{str(datetime.now())[:-7]}] No se encontraron torrents posibles, es probable que la serie/pelicula sea demasiado reciente, el nombre de la serie/pelicula no está bien traducida (culpa del ombi) o todos los torrents encontrados tienen 0 seeders. ¿Cómo reparar esto? Es posible arreglarlo (no podemos asegurar que se arregle) que el peso máximo por film esté causando y filtrando mal, lo puedes subir un poco (por si lo tienes muy bajo) e intentar de nuevo.\n\n')
 
-                    return 0
+                    return [torrent_name, 'no found']
                     break
 
                 continue
@@ -181,10 +181,10 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
 
         else:
             if int(torrent_size) > max_size_bytes:
-                print(f'\n\n[{str(datetime.now())[:-7]}] El torrent encontrado sobrepasa el peso máximo.')
                 qb.delete(torrent_hash)
+                print(f'\n\n[{str(datetime.now())[:-7]}] El torrent encontrado sobrepasa el peso máximo.')
                 continue
 
             else:
-                return torrent_name
+                return [torrent_name, 'found']
                 break

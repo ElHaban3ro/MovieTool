@@ -1,4 +1,4 @@
-MovieTool (v3.5)
+MovieTool (v3.8)
 ---
 
 
@@ -33,7 +33,7 @@ Módulos
 
 
     - **Return**:
-        - Nombre del torrent descargado o 0 si no encontró contenido valido.
+        - Lista del nombre del contenido buscado y su estado: 1. Found, 2. No Found
 
 
 
@@ -108,4 +108,4 @@ Módulos
 
 
 
-                  
+

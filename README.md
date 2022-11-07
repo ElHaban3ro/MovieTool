@@ -10,7 +10,7 @@
 ## Detalles del proyecto
 
 ---
-*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí](https://elhaban3ro.github.io/MovieTool-User/)! Si por otro lado eres programador, puedes ver la documentación [oficial](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*.
+*Hola usuario de internet! Si quieres tener tu proyecto de MovieTool montado, ten en cuenta que no es necesario programar, puedes descargar el ejecutable de todo el [proyecto aquí (comming son)](https)! Si por otro lado eres programador, puedes ver la documentación [oficial](https://github.com/ElHaban3ro/MovieTool/blob/main/docs/index.md)*.
 
 --
 
@@ -41,7 +41,7 @@ Hacemos uso de algunas apps para cumplir nuestro objetivo, y que se proporcionan
 ## Descargas
 *Esta zona va dedicada a todos los usuarios que quieren montarse su propio servidor de contenido multimedia de manera sencilla.*
 
--  Para empezar es necesario que descargue **MovieTool Runner Apps**, la cual instala en su sistema operativo (Windows o Linux) las aplicaciones necesarias para poder crear el servidor. *(La documentación para la configuración de cada uno de los programas que se descargan está junto al ejecutable!)* [![Download MovieToolRunnerApps](https://img.shields.io/badge/Download-MovieTool_Runner_Apps-red.svg?style=flat-square)](https://elhaban3ro.github.io/MovieTool-User/)
+-  Para empezar es necesario que descargue **MovieTool Runner Apps**, la cual instala en su sistema operativo (Windows o Linux) las aplicaciones necesarias para poder crear el servidor. *(Es posible que MTRA sea detectado como "virus" ya que ejecutamos comandos de la consola de Windows a través del script para instalar las apps, si prefiere instalar manualmente cada aplicación, el listado de las mismas está en la descripcción)* [![Visit our page to download!](https://img.shields.io/badge/Download_MTRA_desde_nuestra_web-green.svg?style=flat-square)](https)
 
 
 - Comming Soon.
