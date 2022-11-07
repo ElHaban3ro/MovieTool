@@ -159,7 +159,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         torrent_seeds = actual_torrent['seeds']
         torrent_hash = actual_torrent['hash']
 
-        
+        print(f'[TEST] {torrent_hash}')        
 
 
         if torrent_seeds == 0:

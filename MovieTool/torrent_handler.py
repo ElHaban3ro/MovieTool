@@ -158,7 +158,9 @@ def torrent_handler(torrent_name: str, original_name: str, route_moviesdb: str, 
 
         print(f'[{str(datetime.now())[:-7]}] ====================================\n Siguiendo: {handler_state[2]}')
         print(f'{handler_state[0]} \n====================================\n\n\n')
-                                  
+
+
+        base_route = handler_state[1]
 
         if base_route[-1] == '/' or base_route[-1] == '\\':
             base_route = base_route[:-1]
