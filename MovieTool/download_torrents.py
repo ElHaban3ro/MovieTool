@@ -142,7 +142,7 @@ def download(search: str, jacket_host: str, jacket_apiKey: str, qbtorrent_host: 
         # Descarga final del torrent!
         t_d = qb.download_from_link(torrent_link, savepath = download_path)  # Si la ruta está mal, directamente se descarga en descargas.
         print(f'\n\n[{str(datetime.now())[:-7]}] La descarga de {torrent_name} comenzó.')
-        time.sleep(3)
+        time.sleep(6)
 
         active_torrents = qb.torrents(sort = 'added_on')  # Devielve TODOS los torrents activos ordenados por orden de añadido!
         re_active = []  # Lista para rehacer la lista de los torrents activos.
